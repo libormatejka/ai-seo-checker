@@ -2,10 +2,7 @@ name: Main Daily Run
 
 on:
   schedule:
-    # Každý den v 7:00 UTC (8:00 CET / 9:00 CEST)
     - cron: '0 7 * * *'
-  
-  # Možnost spustit manuálně
   workflow_dispatch:
 
 jobs:
@@ -27,6 +24,125 @@ jobs:
         run: |
           pip install -r requirements.txt
       
+      - name: Test Google Sheets connection
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import os
+          import json
+          import sys
+          
+          print("=" * 60)
+          print("TESTING GOOGLE SHEETS CREDENTIALS")
+          print("=" * 60)
+          
+          # Zkontroluj credentials
+          creds = os.getenv('GOOGLE_SHEETS_CREDENTIALS')
+          print(f'\n1. Credentials present: {bool(creds)}')
+          if creds:
+              print(f'   Credentials length: {len(creds)} characters')
+              print(f'   First 50 chars: {creds[:50]}...')
+          else:
+              print('   ❌ CREDENTIALS ARE MISSING!')
+              sys.exit(1)
+          
+          # Zkus parsovat JSON
+          print('\n2. Testing JSON parsing...')
+          try:
+              creds_dict = json.loads(creds)
+              print('   ✅ JSON is valid')
+              print(f'   Keys in JSON: {list(creds_dict.keys())}')
+              
+              # Zkontroluj důležité keys
+              required_keys = ['type', 'project_id', 'private_key', 'client_email']
+              for key in required_keys:
+                  if key in creds_dict:
+                      if key == 'private_key':
+                          print(f'   ✅ {key}: present ({len(creds_dict[key])} chars)')
+                      elif key == 'client_email':
+                          print(f'   ✅ {key}: {creds_dict[key]}')
+                      else:
+                          print(f'   ✅ {key}: {creds_dict[key]}')
+                  else:
+                      print(f'   ❌ {key}: MISSING!')
+                      
+          except json.JSONDecodeError as e:
+              print(f'   ❌ JSON parse error: {e}')
+              print(f'   Error at position: {e.pos}')
+              sys.exit(1)
+          except Exception as e:
+              print(f'   ❌ Unexpected error: {e}')
+              sys.exit(1)
+          
+          # Zkontroluj URL
+          print('\n3. Testing Sheet URL...')
+          url = os.getenv('SHEET_URL')
+          if url:
+              print(f'   ✅ Sheet URL present')
+              print(f'   URL: {url}')
+              
+              # Extrahuj Sheet ID
+              import re
+              match = re.search(r'/spreadsheets/d/([a-zA-Z0-9-_]+)', url)
+              if match:
+                  sheet_id = match.group(1)
+                  print(f'   ✅ Sheet ID extracted: {sheet_id}')
+              else:
+                  print(f'   ❌ Cannot extract Sheet ID from URL')
+          else:
+              print('   ❌ SHEET_URL IS MISSING!')
+              sys.exit(1)
+          
+          # Test connection
+          print('\n4. Testing actual Google Sheets connection...')
+          try:
+              from google.oauth2.service_account import Credentials
+              import gspread
+              
+              scopes = [
+                  'https://www.googleapis.com/auth/spreadsheets',
+                  'https://www.googleapis.com/auth/drive'
+              ]
+              
+              creds_obj = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+              print('   ✅ Credentials object created')
+              
+              gc = gspread.authorize(creds_obj)
+              print('   ✅ gspread authorized')
+              
+              wb = gc.open_by_url(url)
+              print(f'   ✅ Successfully opened Sheet: "{wb.title}"')
+              
+              # List worksheets
+              worksheets = wb.worksheets()
+              print(f'   ✅ Found {len(worksheets)} worksheets:')
+              for ws in worksheets:
+                  print(f'      - {ws.title}')
+              
+          except gspread.exceptions.SpreadsheetNotFound:
+              print('   ❌ ERROR: Spreadsheet not found!')
+              print('   → Make sure the Sheet URL is correct')
+              print('   → Make sure the Sheet exists')
+              sys.exit(1)
+          except gspread.exceptions.APIError as e:
+              print(f'   ❌ API Error: {e}')
+              if 'PERMISSION_DENIED' in str(e):
+                  print('   → Service account does not have access to this Sheet!')
+                  print(f'   → Share the Sheet with: {creds_dict.get("client_email")}')
+              sys.exit(1)
+          except Exception as e:
+              print(f'   ❌ Connection error: {type(e).__name__}: {e}')
+              import traceback
+              traceback.print_exc()
+              sys.exit(1)
+          
+          print('\n' + '=' * 60)
+          print('✅ ALL TESTS PASSED!')
+          print('=' * 60)
+          PYTHON_SCRIPT
+      
       - name: Run main analysis
         env:
           PERPLEXITY_KEY: ${{ secrets.PERPLEXITY_KEY }}
@@ -41,7 +157,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add data/failed_queries.json
-          git add logs/*.log
+          git add logs/*.log || true
           git diff --staged --quiet || git commit -m "📊 Main run [$(date +'%Y-%m-%d %H:%M')]"
           git push
       
