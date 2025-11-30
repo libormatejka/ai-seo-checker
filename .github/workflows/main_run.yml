@@ -153,14 +153,31 @@ jobs:
           python scripts/main_run.py
       
       - name: Commit failed queries and logs
+        if: always()  # ← DŮLEŽITÉ - spustí i když předchozí krok selhal
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/failed_queries.json
-          git add logs/*.log || true
-          git diff --staged --quiet || git commit -m "📊 Main run [$(date +'%Y-%m-%d %H:%M')]"
-          git push
-      
+          
+          # Přidej failed queries pokud existuje
+          if [ -f "data/failed_queries.json" ]; then
+            git add data/failed_queries.json
+            echo "✅ Added failed_queries.json"
+          fi
+          
+          # Přidej logy pokud existují
+          if [ -d "logs" ] && [ "$(ls -A logs 2>/dev/null)" ]; then
+            git add logs/*.log 2>/dev/null || true
+            echo "✅ Added logs"
+          fi
+          
+          # Commit pouze pokud jsou změny
+          if git diff --staged --quiet; then
+            echo "ℹ️  No changes to commit"
+          else
+            git commit -m "📊 Main run [$(date +'%Y-%m-%d %H:%M')]"
+            git push
+            echo "✅ Changes committed and pushed"
+          fi
       - name: Upload logs as artifact
         if: always()
         uses: actions/upload-artifact@v4

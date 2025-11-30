@@ -90,15 +90,18 @@ def main():
     logger.info(f"⏱️  Duration: {elapsed/60:.1f} minutes")
     logger.info(f"✅ Successful: {results['successful']}")
     logger.info(f"❌ Failed: {results['failed_count']}")
-    logger.info(f"📊 Success rate: {results['successful']/(results['successful']+results['failed_count'])*100:.1f}%")
+    
+    if results['successful'] + results['failed_count'] > 0:
+        success_rate = results['successful']/(results['successful']+results['failed_count'])*100
+        logger.info(f"📊 Success rate: {success_rate:.1f}%")
+        
+        # Jen warning, ne exit - nech to doběhnout
+        if success_rate < 70:
+            logger.warning(f"⚠️  Low success rate: {success_rate:.1f}%")
+    
     logger.info("=" * 60)
     
-    # Exit s chybou pokud víc než 30% selhalo
-    if results['successful'] + results['failed_count'] > 0:
-        failure_rate = results['failed_count'] / (results['successful'] + results['failed_count'])
-        if failure_rate > 0.3:
-            logger.error(f"⚠️  High failure rate: {failure_rate*100:.1f}%")
-            sys.exit(1)
+    # NEUKONČUJ s exit code 1 - nech GitHub Actions commitnout failed_queries.json
 
 if __name__ == "__main__":
     main()
