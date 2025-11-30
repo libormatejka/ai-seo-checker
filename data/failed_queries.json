@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "query": {
+      "query": "Jaké jsou nejlepší banky v ČR?",
+      "category": "Srovnávací",
+      "product": "Brand",
+      "type": "Question",
+      "persona": ""
+    },
+    "provider": "Gemini",
+    "error": "API timeout/error",
+    "timestamp": "2025-11-30T11:50:57.459568",
+    "retry_count": 1
+  }
+]
