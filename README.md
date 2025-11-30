@@ -45,12 +45,12 @@ Přidej následující secrets:
 
 #### `PERPLEXITY_KEY`
 ```
-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
+....
 ```
 
 #### `GEMINI_KEY`
 ```
-AIzaSyAZp8_LUKswqt15Gk3pKulKU_udJXn8-z0
+.....
 ```
 
 #### `SHEET_URL`
