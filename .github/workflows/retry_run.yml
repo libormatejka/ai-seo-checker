@@ -1,0 +1,79 @@
+name: Retry Failed Queries
+
+on:
+  schedule:
+    # 4× denně: 9:00, 11:00, 13:00, 15:00 UTC
+    - cron: '0 9,11,13,15 * * *'
+  
+  workflow_dispatch:
+
+jobs:
+  retry-failed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check if failed queries exist
+        id: check_failed
+        run: |
+          if [ -f "data/failed_queries.json" ]; then
+            count=$(jq length data/failed_queries.json)
+            echo "count=$count" >> $GITHUB_OUTPUT
+            echo "Found $count failed queries"
+            if [ "$count" -eq 0 ]; then
+              echo "✅ No failed queries to retry"
+              exit 0
+            fi
+          else
+            echo "✅ No failed queries file found"
+            exit 0
+          fi
+      
+      - name: Set up Python
+        if: steps.check_failed.outputs.count > 0
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        if: steps.check_failed.outputs.count > 0
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Run retry script
+        if: steps.check_failed.outputs.count > 0
+        env:
+          PERPLEXITY_KEY: ${{ secrets.PERPLEXITY_KEY }}
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+        run: |
+          python scripts/retry_run.py
+      
+      - name: Commit updated failed queries
+        if: steps.check_failed.outputs.count > 0
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/failed_queries.json
+          git add logs/*.log
+          git diff --staged --quiet || git commit -m "🔄 Retry run [$(date +'%Y-%m-%d %H:%M')]"
+          git push
+      
+      - name: Check remaining failures
+        if: steps.check_failed.outputs.count > 0
+        run: |
+          if [ -f "data/failed_queries.json" ]; then
+            remaining=$(jq length data/failed_queries.json)
+            initial=${{ steps.check_failed.outputs.count }}
+            recovered=$((initial - remaining))
+            echo "📊 Recovered: $recovered"
+            echo "❌ Still failing: $remaining"
+            if [ "$remaining" -gt 0 ]; then
+              echo "::warning::Still $remaining failed queries remaining"
+            fi
+          fi

@@ -1,0 +1,64 @@
+name: Main Daily Run
+
+on:
+  schedule:
+    # Každý den v 7:00 UTC (8:00 CET / 9:00 CEST)
+    - cron: '0 7 * * *'
+  
+  # Možnost spustit manuálně
+  workflow_dispatch:
+
+jobs:
+  main-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Run main analysis
+        env:
+          PERPLEXITY_KEY: ${{ secrets.PERPLEXITY_KEY }}
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+        run: |
+          python scripts/main_run.py
+      
+      - name: Commit failed queries and logs
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/failed_queries.json
+          git add logs/*.log
+          git diff --staged --quiet || git commit -m "📊 Main run [$(date +'%Y-%m-%d %H:%M')]"
+          git push
+      
+      - name: Upload logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: main-run-logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 7
+      
+      - name: Check failure rate
+        run: |
+          if [ -f "data/failed_queries.json" ]; then
+            count=$(jq length data/failed_queries.json)
+            echo "Failed queries: $count"
+            if [ "$count" -gt 20 ]; then
+              echo "::warning::High failure rate: $count failed queries"
+            fi
+          fi
