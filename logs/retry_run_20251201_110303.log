@@ -1,0 +1,42 @@
+2025-12-01 11:03:03,410 - retry_run - INFO - 🔄 RETRY RUN STARTED
+2025-12-01 11:03:03,410 - retry_run - INFO - 📋 Found 32 failed query attempts
+2025-12-01 11:03:03,410 - retry_run - INFO - 🎯 Unique query+provider combinations to retry: 32
+2025-12-01 11:03:04,404 - retry_run - INFO - ⚙️  Retrying: U jaké banky investovat?... with Gemini
+2025-12-01 11:03:24,651 - retry_run - INFO - ⚙️  Retrying: Jaké jsou nejlepší banky v ČR?... with Gemini
+2025-12-01 11:03:38,903 - retry_run - INFO - ⚙️  Retrying: Která banka má nejvýhodnější spořící účet?... with Gemini
+2025-12-01 11:03:50,755 - retry_run - INFO - ⚙️  Retrying: Kterou banku bys mi doporučil pro dítě?... with Gemini
+2025-12-01 11:04:19,966 - retry_run - INFO - ⚙️  Retrying: Kde založit svému dítěti investice?... with Gemini
+2025-12-01 11:04:41,658 - retry_run - INFO - ⚙️  Retrying: U které banky založit dítěti účet?... with Gemini
+2025-12-01 11:05:13,251 - retry_run - INFO - ⚙️  Retrying: Která banka má aktuálně nejnižší úrok na spotřebit... with Gemini
+2025-12-01 11:05:24,178 - retry_run - INFO - ⚙️  Retrying: Která banka má nejlepší rating?... with Gemini
+2025-12-01 11:05:41,267 - retry_run - INFO - ⚙️  Retrying: Chci rekonstruovat koupelnu za 300 000 Kč. Je lepš... with Gemini
+2025-12-01 11:06:06,246 - retry_run - INFO - ⚙️  Retrying: Můžeš mi udělat srovnání půjček na 200 000 Kč se s... with Gemini
+2025-12-01 11:06:29,681 - retry_run - INFO - ⚙️  Retrying: Kdo teď nabízí nejvýhodnější úvěr na auto? Banka n... with Gemini
+2025-12-01 11:06:41,304 - retry_run - INFO - ⚙️  Retrying: Když si půjčím 500 000 Kč na 8 let s úrokem 6 %, k... with Gemini
+2025-12-01 11:06:53,655 - retry_run - INFO - ⚙️  Retrying: Spočítej mi, kolik celkem přeplatím na úvěru 100 t... with Gemini
+2025-12-01 11:06:54,726 - retry_run - INFO - ⚙️  Retrying: Jak se změní moje splátka, když si prodloužím dobu... with Gemini
+2025-12-01 11:07:03,929 - retry_run - INFO - ⚙️  Retrying: Mám plat 30 000 Kč čistého. Na jak vysoký úvěr dos... with Gemini
+2025-12-01 11:07:18,150 - retry_run - INFO - ⚙️  Retrying: Existuje nějaká půjčka bez poplatků za sjednání a ... with Gemini
+2025-12-01 11:07:34,303 - retry_run - INFO - ⚙️  Retrying: Mám tři různé půjčky a kreditku. Vyplatí se mi to ... with Gemini
+2025-12-01 11:07:47,706 - retry_run - INFO - ⚙️  Retrying: Jak funguje refinancování úvěru? Můžu tím snížit m... with Gemini
+2025-12-01 11:08:05,443 - retry_run - INFO - ⚙️  Retrying: Můžu předčasně splatit spotřebitelský úvěr? Jsou z... with Gemini
+2025-12-01 11:08:15,386 - retry_run - INFO - ⚙️  Retrying: Co mám dělat, když mi banka zamítla refinancování?... with Gemini
+2025-12-01 11:08:18,808 - retry_run - INFO - ⚙️  Retrying: Jaký je rozdíl mezi úrokovou sazbou a RPSN? Podle ... with Gemini
+2025-12-01 11:08:33,526 - retry_run - INFO - ⚙️  Retrying: Jaké jsou podmínky pro úvěr na rekonstrukci bez za... with Gemini
+2025-12-01 11:08:49,620 - retry_run - INFO - ⚙️  Retrying: Dávají banky úvěry na vybavení domácnosti, nebo mu... with Gemini
+2025-12-01 11:09:10,108 - retry_run - INFO - ⚙️  Retrying: Co to znamená bonita klienta a jak ji můžu zvýšit ... with Gemini
+2025-12-01 11:09:29,177 - retry_run - INFO - ⚙️  Retrying: Co je to 'americká hypotéka' a v čem se liší od bě... with Gemini
+2025-12-01 11:09:47,415 - retry_run - INFO - ⚙️  Retrying: U jaké banky si mnohu vzít půjčku?... with Gemini
+2025-12-01 11:10:04,092 - retry_run - INFO - ⚙️  Retrying: Je lepší si vzít úvěr u ČSOB nebo u České spořitel... with Gemini
+2025-12-01 11:10:24,978 - retry_run - INFO - ⚙️  Retrying: Která banka nabízí nejnižší úrok u půjčky?... with Gemini
+2025-12-01 11:10:41,640 - retry_run - INFO - ⚙️  Retrying: Doporučují klienti Českou spořitelnu jako vhodnou ... with Gemini
+2025-12-01 11:10:51,022 - retry_run - INFO - ⚙️  Retrying: Jaké jsou rozdíly v úrocích u bank?... with Gemini
+2025-12-01 11:11:08,146 - retry_run - INFO - ⚙️  Retrying: Jaké jsou zkušenosti s vyřízením půjčky u České sp... with Gemini
+2025-12-01 11:11:21,831 - retry_run - INFO - ⚙️  Retrying: Jak rychle mi Česká spořitelna schválí půjčku?... with Gemini
+2025-12-01 11:11:35,541 - retry_run - INFO - ============================================================
+2025-12-01 11:11:35,541 - retry_run - INFO - ✅ RETRY RUN COMPLETED
+2025-12-01 11:11:35,541 - retry_run - INFO - 📊 Attempted: 32
+2025-12-01 11:11:35,541 - retry_run - INFO - ✅ Recovered: 32
+2025-12-01 11:11:35,541 - retry_run - INFO - ❌ Still failing: 0
+2025-12-01 11:11:35,541 - retry_run - INFO - 🎉 All queries recovered!
+2025-12-01 11:11:35,541 - retry_run - INFO - ============================================================
