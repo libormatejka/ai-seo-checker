@@ -1,0 +1,12 @@
+2025-12-01 09:37:19,863 - retry_run - INFO - 🔄 RETRY RUN STARTED
+2025-12-01 09:37:19,864 - retry_run - INFO - 📋 Found 33 failed query attempts
+2025-12-01 09:37:19,864 - retry_run - INFO - 🎯 Unique queries to retry: 33
+2025-12-01 09:37:21,468 - retry_run - INFO - ⚙️  Processing 33 queries with 3 workers
+2025-12-01 09:46:43,378 - retry_run - INFO - ============================================================
+2025-12-01 09:46:43,378 - retry_run - INFO - ✅ RETRY RUN COMPLETED
+2025-12-01 09:46:43,378 - retry_run - INFO - ⏱️  Duration: 9.4 minutes
+2025-12-01 09:46:43,378 - retry_run - INFO - 📊 Initial failed: 33
+2025-12-01 09:46:43,378 - retry_run - INFO - ✅ Recovered: 48
+2025-12-01 09:46:43,378 - retry_run - INFO - ❌ Still failing: 18
+2025-12-01 09:46:43,378 - retry_run - WARNING - ⚠️  18 queries still failing
+2025-12-01 09:46:43,378 - retry_run - INFO - ============================================================
