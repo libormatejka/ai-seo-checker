@@ -414,5 +414,18 @@
     "error": "API timeout/error",
     "timestamp": "2025-12-01T07:17:23.542903",
     "retry_count": 1
+  },
+  {
+    "query": {
+      "query": "Která banka nabízí investice?",
+      "category": "Informační",
+      "product": "Investice",
+      "type": "Question",
+      "persona": ""
+    },
+    "provider": "Gemini",
+    "error": "API timeout/error",
+    "timestamp": "2025-12-01T07:21:08.422244",
+    "retry_count": 1
   }
 ]
