@@ -34,8 +34,8 @@ wheels/
 .env
 .env.local
 
-# Logs (kromě failed_queries.json chceme commitovat)
-logs/*.log
+# Logs - necommitujeme
+# logs/*.log
 
 # OS
 .DS_Store
