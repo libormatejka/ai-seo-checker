@@ -26,8 +26,8 @@ CONFIG = {
     
     "model_names": {
         "perplexity": "sonar",
-        "gemini": "gemini-2.5-flash",
-        "judge": "gemini-2.5-flash"
+        "gemini": "gemini-2.5-flash-live",
+        "judge": "gemini-2.5-flash-live"
     },
     
     "sheets": {
