@@ -41,7 +41,7 @@ def main():
     
     logger.info(f"📋 Found {len(failed_items)} failed query attempts")
     
-    # Seskup podle dotazu (můžou být duplicity pro různé providery)
+    # Seskup podle dotazu + provider (KLÍČOVÁ ZMĚNA!)
     queries_to_retry = {}
     for item in failed_items:
         query_text = item['query']['query']
@@ -53,24 +53,21 @@ def main():
             logger.warning(f"⏭️  Skipping query (too many retries): {query_text[:50]}")
             continue
         
-        if query_text not in queries_to_retry:
-            queries_to_retry[query_text] = {
+        # ZMĚNA: Používáme tuple (query, provider) jako klíč
+        key = (query_text, provider)
+        
+        if key not in queries_to_retry:
+            queries_to_retry[key] = {
                 'query_obj': item['query'],
-                'providers': [],
+                'provider': provider,  # ← Jen tento provider
                 'max_retry_count': retry_count
             }
-        
-        queries_to_retry[query_text]['providers'].append(provider)
-        queries_to_retry[query_text]['max_retry_count'] = max(
-            queries_to_retry[query_text]['max_retry_count'], 
-            retry_count
-        )
     
     if not queries_to_retry:
         logger.info("✅ No queries eligible for retry")
         return
     
-    logger.info(f"🎯 Unique queries to retry: {len(queries_to_retry)}")
+    logger.info(f"🎯 Unique query+provider combinations to retry: {len(queries_to_retry)}")
     
     # Načti credentials
     perplexity_key = os.getenv("PERPLEXITY_KEY")
@@ -88,43 +85,74 @@ def main():
         logger.error(f"❌ Failed to initialize: {e}")
         sys.exit(1)
     
-    # Zpracuj jen selhané dotazy
-    queries = [data['query_obj'] for data in queries_to_retry.values()]
+    # ZMĚNA: Zpracuj každý dotaz+provider zvlášť
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date_only = datetime.now().strftime("%Y-%m-%d")
     
-    logger.info(f"⚙️  Processing {len(queries)} queries with {CONFIG['max_workers']} workers")
+    all_results = {
+        'log': [],
+        'data': [],
+        'url': [],
+        'failed': [],
+        'successful': 0,
+        'failed_count': 0
+    }
     
-    start_time = datetime.now()
+    from shared_functions import process_single_query
     
-    try:
-        results = process_queries_parallel(
-            queries=queries,
-            brands=brands,
-            providers=CONFIG['active_providers'],
-            max_workers=CONFIG['max_workers'],
-            perplexity_key=perplexity_key,
-            gemini_key=gemini_key,
-            is_retry=True
-        )
-    except Exception as e:
-        logger.error(f"❌ Processing failed: {e}")
-        sys.exit(1)
+    for (query_text, provider), data in queries_to_retry.items():
+        logger.info(f"⚙️  Retrying: {query_text[:50]}... with {provider}")
+        
+        try:
+            # Zpracuj s JEDNÍM providerem
+            result = process_single_query(
+                item=data['query_obj'],
+                providers=[provider],  # ← JEN TENTO PROVIDER!
+                all_brands=brands,
+                timestamp=timestamp,
+                date_only=date_only,
+                perplexity_key=perplexity_key,
+                gemini_key=gemini_key
+            )
+            
+            # Shromáždi výsledky
+            all_results['log'].extend(result['log'])
+            all_results['data'].extend(result['data'])
+            all_results['url'].extend(result['url'])
+            all_results['failed'].extend(result['failed'])
+            
+            if result['failed']:
+                all_results['failed_count'] += len(result['failed'])
+            else:
+                all_results['successful'] += 1
+                
+        except Exception as e:
+            logger.error(f"❌ Error processing: {e}")
+            all_results['failed'].append({
+                'query': data['query_obj'],
+                'provider': provider,
+                'error': str(e),
+                'timestamp': datetime.now().isoformat(),
+                'retry_count': data['max_retry_count'] + 1
+            })
+            all_results['failed_count'] += 1
+    
+    # Uložení výsledků
+    from shared_functions import save_results_to_sheets_internal
+    save_results_to_sheets_internal(all_results['log'], all_results['data'], all_results['url'])
     
     # Aktualizuj failed_queries.json
-    save_failed_queries(results['failed'], failed_path)
+    save_failed_queries(all_results['failed'], failed_path)
     
     # Report
-    elapsed = (datetime.now() - start_time).total_seconds()
-    initial_count = len(failed_items)
-    
     logger.info("=" * 60)
     logger.info("✅ RETRY RUN COMPLETED")
-    logger.info(f"⏱️  Duration: {elapsed/60:.1f} minutes")
-    logger.info(f"📊 Initial failed: {initial_count}")
-    logger.info(f"✅ Recovered: {results['successful']}")
-    logger.info(f"❌ Still failing: {results['failed_count']}")
+    logger.info(f"📊 Attempted: {len(queries_to_retry)}")
+    logger.info(f"✅ Recovered: {all_results['successful']}")
+    logger.info(f"❌ Still failing: {all_results['failed_count']}")
     
-    if results['failed_count'] > 0:
-        logger.warning(f"⚠️  {results['failed_count']} queries still failing")
+    if all_results['failed_count'] > 0:
+        logger.warning(f"⚠️  {all_results['failed_count']} queries still failing")
     else:
         logger.info("🎉 All queries recovered!")
     
