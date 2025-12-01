@@ -141,8 +141,14 @@ def main():
     from shared_functions import save_results_to_sheets_internal
     save_results_to_sheets_internal(all_results['log'], all_results['data'], all_results['url'])
     
-    # Aktualizuj failed_queries.json
-    save_failed_queries(all_results['failed'], failed_path)
+    # Přepsat failed_queries.json pouze novými selháními (ne mergovat!)
+    with open(failed_path, 'w', encoding='utf-8') as f:
+        json.dump(all_results['failed'], f, indent=2, ensure_ascii=False)
+
+    if all_results['failed']:
+        logger.info(f"💾 Saved {len(all_results['failed'])} still-failing queries")
+    else:
+        logger.info("💾 Cleared failed_queries.json - all recovered!")
     
     # Report
     logger.info("=" * 60)
