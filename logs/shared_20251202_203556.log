@@ -1,0 +1,40 @@
+2025-12-02 20:35:58,911 - shared - INFO - 📋 Columns in Queries sheet: ['QUERY_ID', 'QUERY', 'QUERY_CATEGORY', 'QUERY_PRODUCT', 'QUERY_TOP_PRODUCT', 'QUERY_SUB_PRODUCT', 'QUERY_TYPE', 'PERSON', 'ACTIVE']
+2025-12-02 20:35:58,911 - shared - INFO - 📋 First row data: {'QUERY_ID': 1, 'QUERY': 'Jaké jsou nejlepší banky v ČR?', 'QUERY_CATEGORY': 'Srovnávací', 'QUERY_PRODUCT': 'Brand', 'QUERY_TOP_PRODUCT': 'Brand', 'QUERY_SUB_PRODUCT': 'Brand', 'QUERY_TYPE': 'Question', 'PERSON': 1, 'ACTIVE': 'TRUE'}
+2025-12-02 20:35:58,911 - shared - INFO - 📋 QUERY_TYPEPERSON value: 'None'
+2025-12-02 20:35:58,911 - shared - INFO - ⏭️  Skipped 2 inactive queries
+2025-12-02 20:35:58,912 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2025-12-02 20:36:12,833 - shared - ERROR - Gemini error 404: {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-2.5-flash-live is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.",
+    "status": "NOT_FOUND"
+  }
+}
+
+2025-12-02 20:36:13,955 - shared - ERROR - Gemini error 404: {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-2.5-flash-live is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.",
+    "status": "NOT_FOUND"
+  }
+}
+
+2025-12-02 20:36:16,092 - shared - ERROR - Gemini error 404: {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-2.5-flash-live is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.",
+    "status": "NOT_FOUND"
+  }
+}
+
+2025-12-02 20:36:20,211 - shared - ERROR - Gemini error 404: {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-2.5-flash-live is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.",
+    "status": "NOT_FOUND"
+  }
+}
+
+2025-12-02 20:36:21,308 - shared - INFO - ✅ Saved 1 rows to log_answers
+2025-12-02 20:36:22,476 - shared - INFO - ✅ Saved 18 rows to data_analysis
+2025-12-02 20:36:22,479 - shared - INFO - 💾 Saved 1 failed queries to data/failed_queries.json
