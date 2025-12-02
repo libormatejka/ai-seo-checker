@@ -136,8 +136,8 @@ def load_queries(wb):
             'product': str(row.get('QUERY_PRODUCT', '') or ''),
             'top_product': str(row.get('QUERY_TOP_PRODUCT', '') or ''),
             'sub_product': str(row.get('QUERY_SUB_PRODUCT', '') or ''),
-            'query_type': str(row.get('QUERY_TYPE', '') or ''),  # ← NOVÝ
-            'person': str(row.get('PERSON', '') or ''),  # ← OPRAVENO
+            'query_type': str(row.get('QUERY_TYPE', '') or ''),
+            'person': str(row.get('PERSON', '') or ''),
             'active': True
         })
     
@@ -167,9 +167,9 @@ def load_brands(wb):
         # Inicializuj brand pokud neexistuje
         if term_name not in brands_dict:
             brands_dict[term_name] = {
-                'name': term_name,  # Hlavní název (Česká spořitelna)
+                'name': term_name,
                 'category': category,
-                'keywords': []  # Seznam všech variant
+                'keywords': []
             }
         
         # Přidej keyword (variantu)
@@ -214,7 +214,7 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
         log_headers = [
             'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
-            'Query_Type', 'Person', 'Provider', 'Response',  # ← OPRAVENO
+            'Query_Type', 'Person', 'Provider', 'Response',
             'Input_Tokens', 'Output_Tokens'
         ]
         
@@ -224,7 +224,6 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
             ws_log = wb.add_worksheet(title="log_answers", rows=1000, cols=len(log_headers))
             ws_log.append_row(log_headers)
         
-        # Převeď na řádky
         rows = [[row.get(h, '') for h in log_headers] for row in log_rows]
         ws_log.append_rows(rows)
         logger.info(f"✅ Saved {len(rows)} rows to log_answers")
@@ -236,7 +235,7 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
             'Query_Type', 'Person', 'Provider', 'Term_Version', 'Term_Name',
             'Term_Category', 'Text_Presence', 'Citation_Presence',
-            'Rank', 'Mention_Count', 'Sentiment', 'Recommendation'  # ← NOVÉ
+            'Rank', 'Mention_Count', 'Sentiment', 'Recommendation'
         ]
         
         try:
@@ -254,7 +253,7 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
         url_headers = [
             'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
-            'Query_Type', 'Person', 'Provider', 'URL', 'URL_Name', 'URL_Category'  # ← OPRAVENO
+            'Query_Type', 'Person', 'Provider', 'URL', 'URL_Name', 'URL_Category'
         ]
         
         try:
@@ -421,54 +420,114 @@ def get_ai_response(provider, query, perplexity_key, gemini_key):
     return retry_with_backoff(_call)
 
 
-def get_advanced_metrics(text, brand_name, gemini_key):
+def get_batch_sentiment(text, mentioned_brands, gemini_key):
     """
-    Sentiment analysis pomocí Gemini
-    Vrací: {'sentiment': 'POSITIVE/NEGATIVE/NEUTRAL', 'recommendation': 'ANO/NE'}
+    Analyzuje sentiment pro více brandů najednou - šetří API cally
     """
+    if not mentioned_brands:
+        return {}
+    
     model_name = CONFIG["model_names"]["judge"]
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
     
-    prompt = f"""Analyzuj následující text z hlediska zmínky o značce "{brand_name}".
+    text_sample = text[:3000] if len(text) > 3000 else text
+    brands_list = ', '.join([f'"{b}"' for b in mentioned_brands])
+    
+    prompt = f"""Analyzuj sentiment k následujícím značkám v textu: {brands_list}
 
-Text: {text[:1000]}
+Text:
+{text_sample}
 
-Odpověz ve formátu JSON:
-{{
-  "sentiment": "POSITIVE" nebo "NEGATIVE" nebo "NEUTRAL",
-  "recommendation": "ANO" nebo "NE"
-}}
+Odpověz POUZE validním JSON pole v tomto formátu (bez markdown, bez vysvětlení):
+[
+  {{"brand": "Česká spořitelna", "sentiment": "POSITIVE", "recommendation": "ANO"}},
+  {{"brand": "ČSOB", "sentiment": "NEUTRAL", "recommendation": "NE"}}
+]
 
-sentiment = celkový tón zmínky (pozitivní/negativní/neutrální)
-recommendation = zda text doporučuje tuto značku (ANO/NE)
+sentiment = POSITIVE pokud pozitivní, NEGATIVE pokud negativní, NEUTRAL pokud neutrální
+recommendation = ANO pokud doporučuje, NE pokud nedoporučuje
 
-Odpověz POUZE validním JSON, nic jiného."""
+Odpověz POUZE JSON pole, nic jiného."""
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}]
     }
     
     try:
-        resp = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=30)
+        resp = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=60)
         
         if resp.status_code == 200:
             d = resp.json()
             if 'candidates' in d and d['candidates']:
-                txt = d['candidates'][0].get('content', {}).get('parts', [])[0].get('text', "")
+                candidate = d['candidates'][0]
                 
-                # Odstraň markdown backticks
-                txt = txt.replace('```json', '').replace('```', '').strip()
+                # Kontrola jestli není blokovaný
+                if candidate.get('finishReason') == 'SAFETY':
+                    logger.warning("⚠️ Batch sentiment blocked by safety filter")
+                    return {}
                 
-                # Parse JSON
-                result = json.loads(txt)
-                return {
-                    'sentiment': result.get('sentiment', 'NEUTRAL'),
-                    'recommendation': result.get('recommendation', 'NE')
-                }
-    except:
-        pass
+                txt = candidate.get('content', {}).get('parts', [])[0].get('text', '')
+                
+                if not txt:
+                    logger.warning("⚠️ Empty batch sentiment response")
+                    return {}
+                
+                # Čištění
+                txt = txt.strip()
+                txt = re.sub(r'```json\s*', '', txt)
+                txt = re.sub(r'```\s*', '', txt)
+                
+                # Najdi JSON pole
+                start = txt.find('[')
+                end = txt.rfind(']')
+                if start != -1 and end != -1:
+                    txt = txt[start:end+1]
+                else:
+                    logger.warning(f"⚠️ No JSON array in batch sentiment: {txt[:100]}")
+                    return {}
+                
+                # Parse
+                results = json.loads(txt)
+                
+                # Vytvoř dictionary
+                sentiment_dict = {}
+                for item in results:
+                    brand = item.get('brand', '')
+                    sentiment = item.get('sentiment', 'NEUTRAL').upper()
+                    recommendation = item.get('recommendation', 'NE').upper()
+                    
+                    # Normalizace
+                    if sentiment not in ['POSITIVE', 'NEGATIVE', 'NEUTRAL']:
+                        sentiment = 'NEUTRAL'
+                    if recommendation in ['YES']:
+                        recommendation = 'ANO'
+                    elif recommendation in ['NO']:
+                        recommendation = 'NE'
+                    elif recommendation not in ['ANO', 'NE']:
+                        recommendation = 'NE'
+                    
+                    sentiment_dict[brand] = {
+                        'sentiment': sentiment,
+                        'recommendation': recommendation
+                    }
+                
+                logger.info(f"✅ Batch sentiment for {len(sentiment_dict)} brands")
+                return sentiment_dict
+        
+        elif resp.status_code == 429:
+            logger.warning("⚠️ Rate limit for batch sentiment")
+            time.sleep(2)
+            return {}
+        else:
+            logger.error(f"❌ Batch sentiment API error {resp.status_code}")
+            return {}
     
-    return {'sentiment': '', 'recommendation': ''}
+    except json.JSONDecodeError as e:
+        logger.error(f"❌ Batch sentiment JSON parse error: {e}")
+        return {}
+    except Exception as e:
+        logger.error(f"❌ Batch sentiment exception: {e}")
+        return {}
 
 # ============================================================
 # ANALYSIS FUNCTIONS
@@ -496,33 +555,22 @@ def clean_text_aggressive(text):
     
     return text
 
+
 def find_all_brand_mentions(text, all_brands):
     """
     Najde všechny zmínky všech brandů v textu a vrátí je seřazené podle pozice
-    
-    Returns:
-        {
-            'brand_name': {
-                'rank': int,
-                'position': int,
-                'matched_keywords': [list],
-                'mention_count': int  ← NOVÉ
-            }
-        }
     """
     text_clean = clean_text_aggressive(text)
     
-    # Najdi všechny zmínky
     all_mentions = []
     
     for brand in all_brands:
         brand_name = brand['name']
         keywords = brand['keywords']
         
-        # Najdi VŠECHNY výskyty tohoto brandu
         first_pos = None
         matched_kws = []
-        total_mentions = 0  # ← NOVÉ: celkový počet výskytů
+        total_mentions = 0
         
         for keyword in keywords:
             keyword_clean = clean_text_aggressive(keyword)
@@ -537,7 +585,7 @@ def find_all_brand_mentions(text, all_brands):
             
             if matches:
                 matched_kws.append(keyword)
-                total_mentions += len(matches)  # ← NOVÉ: počítáme všechny výskyty
+                total_mentions += len(matches)
                 
                 # Zapamatuj první pozici
                 for match in matches:
@@ -550,7 +598,7 @@ def find_all_brand_mentions(text, all_brands):
                 'brand_name': brand_name,
                 'position': first_pos,
                 'matched_keywords': matched_kws,
-                'mention_count': total_mentions  # ← NOVÉ
+                'mention_count': total_mentions
             })
     
     # Seřaď podle pozice (nejdřív = rank 1)
@@ -563,29 +611,15 @@ def find_all_brand_mentions(text, all_brands):
             'rank': rank,
             'position': mention['position'],
             'matched_keywords': mention['matched_keywords'],
-            'mention_count': mention['mention_count']  # ← NOVÉ
+            'mention_count': mention['mention_count']
         }
     
     return brand_rankings
 
+
 def analyze_presence_with_position(brand_name, brand_rankings, citations, brand_keywords):
     """
     Analyzuje přítomnost brandu - používá pre-computed rankings
-    
-    Args:
-        brand_name: Název brandu
-        brand_rankings: Dictionary z find_all_brand_mentions()
-        citations: List citací
-        brand_keywords: Keywords tohoto brandu (pro citace)
-    
-    Returns:
-        {
-            'found_text': bool,
-            'found_citation': bool,
-            'position_index': int nebo None (rank),
-            'matched_keywords': list,
-            'mention_count': int  ← NOVÉ
-        }
     """
     # Text presence a rank z pre-computed rankings
     brand_info = brand_rankings.get(brand_name)
@@ -594,12 +628,12 @@ def analyze_presence_with_position(brand_name, brand_rankings, citations, brand_
         found_text = True
         position_index = brand_info['rank']
         matched_keywords = brand_info['matched_keywords']
-        mention_count = brand_info['mention_count']  # ← NOVÉ
+        mention_count = brand_info['mention_count']
     else:
         found_text = False
         position_index = None
         matched_keywords = []
-        mention_count = 0  # ← NOVÉ
+        mention_count = 0
     
     # Hledej v citacích
     found_citation = False
@@ -619,22 +653,18 @@ def analyze_presence_with_position(brand_name, brand_rankings, citations, brand_
         'found_citation': found_citation,
         'position_index': position_index,
         'matched_keywords': matched_keywords,
-        'mention_count': mention_count  # ← NOVÉ
+        'mention_count': mention_count
     }
 
 
 def identify_url_owner(url, brands):
-    """
-    Identifikuje vlastníka URL podle brand URLs
-    """
+    """Identifikuje vlastníka URL podle brand URLs"""
     if not url:
         return None
     
     url_lower = url.lower()
     
-    # Zkontroluj každý brand
     for brand in brands:
-        # Zkontroluj jestli URL obsahuje nějaké keywords z brand name
         for keyword in brand['keywords']:
             if keyword.lower() in url_lower:
                 return brand['name']
@@ -701,10 +731,17 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
             }
             results['log'].append(log_entry)
             
-            # ⚡ NOVÉ: Najdi VŠECHNY brandy JEDNOU
+            # Najdi VŠECHNY brandy JEDNOU
             brand_rankings = find_all_brand_mentions(response['text'], all_brands)
             
-            # Analýza brandů - teraz používá pre-computed rankings
+            # Batch sentiment pro všechny zmíněné brandy
+            mentioned_brands = list(brand_rankings.keys())
+            if mentioned_brands:
+                batch_sentiments = get_batch_sentiment(response['text'], mentioned_brands, gemini_key)
+            else:
+                batch_sentiments = {}
+            
+            # Analýza brandů
             for brand in all_brands:
                 # Analyzuj pomocí rankings
                 presence = analyze_presence_with_position(
@@ -714,12 +751,11 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     brand['keywords']
                 )
                 
-                # Sentiment analysis
-                sentiment_data = get_advanced_metrics(
-                    response['text'],
-                    brand['name'],
-                    gemini_key
-                )
+                # Získej sentiment z batch (pokud byl brand zmíněn)
+                if brand['name'] in batch_sentiments:
+                    sentiment_data = batch_sentiments[brand['name']]
+                else:
+                    sentiment_data = {'sentiment': '', 'recommendation': ''}
                 
                 # Vytvoř Term_Version ze seznamu nalezených keywords
                 if presence.get('matched_keywords'):
@@ -745,13 +781,13 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     'Text_Presence': 1 if presence['found_text'] else 0,
                     'Citation_Presence': 1 if presence['found_citation'] else 0,
                     'Rank': presence['position_index'] if presence['position_index'] else '',
-                    'Mention_Count': presence.get('mention_count', 0),  # ← NOVÉ
+                    'Mention_Count': presence.get('mention_count', 0),
                     'Sentiment': sentiment_data.get('sentiment', ''),
                     'Recommendation': sentiment_data.get('recommendation', '')
                 }
                 results['data'].append(data_entry)
             
-            # URL analýza (beze změny)
+            # URL analýza
             for citation in response['citations']:
                 owner = identify_url_owner(citation, all_brands)
                 
@@ -784,6 +820,7 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
             })
     
     return results
+
 
 def process_queries_parallel(queries, brands, providers, max_workers, perplexity_key, gemini_key):
     """Zpracuje dotazy paralelně"""
