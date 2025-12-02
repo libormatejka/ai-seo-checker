@@ -14,8 +14,8 @@ sys.path.append(str(Path(__file__).parent))
 from shared_functions import (
     init_google_sheets,
     load_brands,
-    process_queries_parallel,
-    save_failed_queries,
+    process_single_query,
+    save_results_to_sheets_internal,
     setup_logging,
     CONFIG
 )
@@ -59,7 +59,7 @@ def main():
         if key not in queries_to_retry:
             queries_to_retry[key] = {
                 'query_obj': item['query'],
-                'provider': provider,  # ← Jen tento provider
+                'provider': provider,
                 'max_retry_count': retry_count
             }
     
@@ -98,8 +98,6 @@ def main():
         'failed_count': 0
     }
     
-    from shared_functions import process_single_query
-    
     for (query_text, provider), data in queries_to_retry.items():
         logger.info(f"⚙️  Retrying: {query_text[:50]}... with {provider}")
         
@@ -137,18 +135,17 @@ def main():
             })
             all_results['failed_count'] += 1
     
-    # Uložení výsledků
-    from shared_functions import save_results_to_sheets_internal
+    # Uložení výsledků do Sheets
     save_results_to_sheets_internal(all_results['log'], all_results['data'], all_results['url'])
     
-    # Přepsat failed_queries.json pouze novými selháními (ne mergovat!)
+    # OPRAVA: Přepsat failed_queries.json pouze novými selháními
     with open(failed_path, 'w', encoding='utf-8') as f:
         json.dump(all_results['failed'], f, indent=2, ensure_ascii=False)
-
+    
     if all_results['failed']:
         logger.info(f"💾 Saved {len(all_results['failed'])} still-failing queries")
     else:
-        logger.info("💾 Cleared failed_queries.json - all recovered!")
+        logger.info(f"💾 Cleared failed_queries.json - all recovered!")
     
     # Report
     logger.info("=" * 60)

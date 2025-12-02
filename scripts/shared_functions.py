@@ -1,42 +1,34 @@
+#!/usr/bin/env python3
 """
-Sdílené funkce pro main_run.py i retry_run.py
-Obsahuje všechnu core logiku pro API calls, analýzu a ukladání dat
+Sdílené funkce pro AI visibility monitoring
 """
 
 import os
+import re
+import time
 import json
 import logging
-import gspread
 import requests
-import time
 import unicodedata
-import re
-from google.oauth2.service_account import Credentials
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import threading
+from threading import Lock
 
-# ==========================================
-# CONFIG
-# ==========================================
+import gspread
+from google.oauth2.service_account import Credentials
+
+# ============================================================
+# KONFIGURACE
+# ============================================================
 
 CONFIG = {
     "active_providers": ["Perplexity", "Gemini"],
     
     "model_names": {
         "perplexity": "sonar",
-        "gemini": "gemini-2.0-flash-lite",
-        "judge": "gemini-2.0-flash-lite"
-    },
-    
-    "sheets": {
-        "queries": "Queries",
-        "terms": "Terms",
-        "urls": "Urls",
-        "log_output": "log_answers",
-        "data_output": "data_analysis",
-        "url_output": "url_analysis"
+        "gemini": "gemini-2.5-flash-live",
+        "judge": "gemini-2.5-flash-live"
     },
     
     "max_workers": 3,
@@ -45,22 +37,23 @@ CONFIG = {
     "request_timeout": 120,
 }
 
-# Thread locks
-sheets_lock = threading.Lock()
+# Thread-safe locks
+sheets_lock = Lock()
+failed_lock = Lock()
 
-# ==========================================
+# ============================================================
 # LOGGING
-# ==========================================
+# ============================================================
 
-def setup_logging(script_name):
-    """Nastav logging do souboru i konzole"""
+def setup_logging(name):
+    """Nastaví logging pro script"""
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
     
-    log_file = log_dir / f"{script_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = log_dir / f"{name}_{timestamp}.log"
     
-    # Vytvoř logger
-    logger = logging.getLogger(script_name)
+    logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     
     # File handler
@@ -83,20 +76,17 @@ def setup_logging(script_name):
 
 logger = setup_logging("shared")
 
-# ==========================================
+# ============================================================
 # GOOGLE SHEETS
-# ==========================================
+# ============================================================
 
 def init_google_sheets():
-    """Inicializuj Google Sheets přes service account"""
+    """Inicializuje připojení k Google Sheets"""
     creds_json = os.getenv("GOOGLE_SHEETS_CREDENTIALS")
     sheet_url = os.getenv("SHEET_URL")
     
-    if not creds_json:
-        raise ValueError("Missing GOOGLE_SHEETS_CREDENTIALS environment variable")
-    
-    if not sheet_url:
-        raise ValueError("Missing SHEET_URL environment variable")
+    if not creds_json or not sheet_url:
+        raise ValueError("Missing GOOGLE_SHEETS_CREDENTIALS or SHEET_URL")
     
     creds_dict = json.loads(creds_json)
     
@@ -107,333 +97,451 @@ def init_google_sheets():
     
     creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     gc = gspread.authorize(creds)
+    wb = gc.open_by_url(sheet_url)
     
-    return gc.open_by_url(sheet_url)
+    return wb
 
-# ==========================================
-# DATA LOADING
-# ==========================================
-
-def load_brands(wb):
-    """Načti brandy z Terms a Urls sheetů"""
-    brands_map = {}
-    
-    try:
-        # Načti Terms
-        ws_terms = wb.worksheet(CONFIG["sheets"]["terms"])
-        for row in ws_terms.get_all_values()[1:]:
-            if len(row) < 2: 
-                continue
-            term, name = row[0].strip(), row[1].strip()
-            if not term or not name: 
-                continue
-            if name not in brands_map:
-                type_val = row[2].strip() if len(row) > 2 else "Competitor"
-                brands_map[name] = {"name": name, "type": type_val, "keywords": [], "urls": []}
-            brands_map[name]["keywords"].append(term)
-        
-        # Načti URLs
-        ws_urls = wb.worksheet(CONFIG["sheets"]["urls"])
-        for row in ws_urls.get_all_values()[1:]:
-            if len(row) < 2: 
-                continue
-            url_val, name = row[0].strip(), row[1].strip()
-            if not url_val or not name: 
-                continue
-            if name not in brands_map:
-                type_val = row[2].strip() if len(row) > 2 else "Competitor"
-                brands_map[name] = {"name": name, "type": type_val, "keywords": [], "urls": []}
-            brands_map[name]["urls"].append(url_val)
-        
-        return list(brands_map.values())
-        
-    except Exception as e:
-        logger.error(f"Failed to load brands: {e}")
-        return []
 
 def load_queries(wb):
-    """Načti dotazy z Queries sheetu"""
+    """Načte dotazy z Google Sheets - nová struktura"""
+    ws = wb.worksheet("Queries")
+    data = ws.get_all_records()
+    
     queries = []
+    for row in data:
+        # Přeskakuj prázdné řádky
+        if not row.get('QUERY') or not str(row.get('QUERY')).strip():
+            continue
+        
+        queries.append({
+            'query_id': str(row.get('QUERY_ID', '')),
+            'query': str(row.get('QUERY', '')),
+            'category': str(row.get('QUERY_CATEGORY', '')),
+            'product': str(row.get('QUERY_PRODUCT', '')),
+            'top_product': str(row.get('QUERY_TOP_PRODUCT', '')),
+            'sub_product': str(row.get('QUERY_SUB_PRODUCT', '')),
+            'type_person': str(row.get('QUERY_TYPEPERSON', ''))
+        })
     
-    try:
-        ws_queries = wb.worksheet(CONFIG["sheets"]["queries"])
-        all_data = ws_queries.get_all_values()
-        
-        if len(all_data) <= 1:
-            return []
-        
-        headers = [h.strip().lower() for h in all_data[0]]
-        
-        idx_query = headers.index('query') if 'query' in headers else -1
-        idx_category = headers.index('query category') if 'query category' in headers else -1
-        idx_product = headers.index('query product') if 'query product' in headers else -1
-        idx_type = headers.index('query type') if 'query type' in headers else -1
-        idx_persona = headers.index('persona') if 'persona' in headers else -1
-        
-        if idx_query == -1:
-            logger.error("Column 'query' not found in Queries sheet")
-            return []
-        
-        for row in all_data[1:]:
-            q_text = row[idx_query].strip() if len(row) > idx_query else ""
-            if not q_text: 
-                continue
-            
-            q_cat = row[idx_category].strip() if idx_category != -1 and len(row) > idx_category else "Obecné"
-            q_prod = row[idx_product].strip() if idx_product != -1 and len(row) > idx_product else "Neurčeno"
-            q_type = row[idx_type].strip() if idx_type != -1 and len(row) > idx_type else "Neurčeno"
-            q_persona = row[idx_persona].strip() if idx_persona != -1 and len(row) > idx_persona else "Neurčeno"
-            
-            queries.append({
-                "query": q_text,
-                "category": q_cat,
-                "product": q_prod,
-                "type": q_type,
-                "persona": q_persona
-            })
-        
-        return queries
-        
-    except Exception as e:
-        logger.error(f"Failed to load queries: {e}")
-        return []
+    return queries
 
-# ==========================================
-# HELPER FUNCTIONS
-# ==========================================
 
-def resolve_redirect(url):
-    """Resolve Google grounding redirects"""
-    if not url: 
-        return ""
-    url = str(url).strip()
+def load_brands(wb):
+    """Načte brandy (terms) z Google Sheets - nová struktura"""
+    ws = wb.worksheet("Terms")
+    data = ws.get_all_records()
     
-    matches = list(re.finditer(r'https?://', url))
-    if len(matches) > 1:
-        first_start = matches[0].start()
-        second_start = matches[1].start()
-        candidate = url[first_start:second_start]
-        if "vertexaisearch" not in candidate and "google.com/grounding" not in candidate:
-            return candidate
-        url = candidate
+    brands = []
+    for row in data:
+        # Přeskakuj prázdné řádky
+        if not row.get('TERM_NAME') or not str(row.get('TERM_NAME')).strip():
+            continue
+        
+        # Načti brand keywords ze sloupce TERM_NAME
+        term_name = str(row.get('TERM_NAME', ''))
+        keywords = [k.strip() for k in term_name.split(',') if k.strip()]
+        
+        brands.append({
+            'version': str(row.get('TERM_VERSION', '')),
+            'name': term_name,
+            'category': str(row.get('TERM_CATEGORY', '')),
+            'keywords': keywords
+        })
     
-    if "vertexaisearch.cloud.google.com" in url or "google.com/grounding-api-redirect" in url:
+    return brands
+
+
+def load_urls(wb):
+    """Načte URLs z Google Sheets - nová struktura"""
+    ws = wb.worksheet("Urls")
+    data = ws.get_all_records()
+    
+    urls = []
+    for row in data:
+        # Přeskakuj prázdné řádky
+        if not row.get('URL') or not str(row.get('URL')).strip():
+            continue
+        
+        urls.append({
+            'url': str(row.get('URL', '')),
+            'name': str(row.get('URL_NAME', '')),
+            'category': str(row.get('URL_CATEGORY', ''))
+        })
+    
+    return urls
+
+
+def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
+    """Uloží výsledky do Google Sheets"""
+    
+    if not log_rows and not data_rows and not url_rows:
+        return
+    
+    wb = init_google_sheets()
+    
+    # Log answers sheet
+    if log_rows:
+        log_headers = [
+            'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
+            'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
+            'Query_TypePerson', 'Provider', 'Response',
+            'Input_Tokens', 'Output_Tokens'
+        ]
+        
         try:
-            headers = {'User-Agent': 'Mozilla/5.0'}
-            resp = requests.get(url, allow_redirects=True, timeout=5, headers=headers, stream=True)
-            final_url = resp.url
-            resp.close()
-            return final_url
+            ws_log = wb.worksheet("log_answers")
         except:
-            return url
+            ws_log = wb.add_worksheet(title="log_answers", rows=1000, cols=len(log_headers))
+            ws_log.append_row(log_headers)
+        
+        # Převeď na řádky
+        rows = [[row.get(h, '') for h in log_headers] for row in log_rows]
+        ws_log.append_rows(rows)
+        logger.info(f"✅ Saved {len(rows)} rows to log_answers")
     
-    return url
+    # Data analysis sheet
+    if data_rows:
+        data_headers = [
+            'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
+            'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
+            'Query_TypePerson', 'Provider', 'Term_Version', 'Term_Name',
+            'Term_Category', 'Text_Presence', 'Citation_Presence',
+            'Rank', 'Sentiment', 'Recommendation'
+        ]
+        
+        try:
+            ws_data = wb.worksheet("data_analysis")
+        except:
+            ws_data = wb.add_worksheet(title="data_analysis", rows=10000, cols=len(data_headers))
+            ws_data.append_row(data_headers)
+        
+        rows = [[row.get(h, '') for h in data_headers] for row in data_rows]
+        ws_data.append_rows(rows)
+        logger.info(f"✅ Saved {len(rows)} rows to data_analysis")
+    
+    # URL analysis sheet
+    if url_rows:
+        url_headers = [
+            'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
+            'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
+            'Query_TypePerson', 'Provider', 'URL', 'URL_Name', 'URL_Category'
+        ]
+        
+        try:
+            ws_url = wb.worksheet("url_analysis")
+        except:
+            ws_url = wb.add_worksheet(title="url_analysis", rows=10000, cols=len(url_headers))
+            ws_url.append_row(url_headers)
+        
+        rows = [[row.get(h, '') for h in url_headers] for row in url_rows]
+        ws_url.append_rows(rows)
+        logger.info(f"✅ Saved {len(rows)} rows to url_analysis")
 
-def clean_text_aggressive(text):
-    """Vyčisti text pro porovnání"""
-    if not text: 
-        return ""
-    t = str(text)
-    t = re.sub(r'\[.*?\]', '', t)
-    t = t.replace('*', '').replace('#', '').replace('_', '')
-    t = unicodedata.normalize("NFKC", t)
-    t = t.lower()
-    t = re.sub(r'\s+', ' ', t)
-    return t.strip()
+# ============================================================
+# API CONNECTORS
+# ============================================================
 
-# ==========================================
-# RETRY LOGIC
-# ==========================================
-
-def retry_with_backoff(func, max_retries=None, initial_delay=1):
-    """Univerzální retry funkce s exponenciálním backoffem"""
+def retry_with_backoff(func, max_retries=None):
+    """Zkusí funkci s exponenciálním backoffem"""
     if max_retries is None:
         max_retries = CONFIG["max_retries"]
     
     for attempt in range(max_retries):
-        try:
-            result = func()
-            if result is not None:
-                return result
-        except requests.exceptions.Timeout:
-            if attempt == max_retries - 1:
-                return None
-        except Exception as e:
-            if attempt == max_retries - 1:
-                return None
+        result = func()
+        if result is not None:
+            return result
         
-        delay = initial_delay * (2 ** attempt)
-        time.sleep(min(delay, 10))
+        if attempt < max_retries - 1:
+            wait_time = 2 ** attempt
+            time.sleep(wait_time)
     
     return None
 
-# ==========================================
-# API CALLS
-# ==========================================
 
 def ask_perplexity(query, api_key):
     """Zavolej Perplexity API"""
+    model_name = CONFIG["model_names"]["perplexity"]
     url = "https://api.perplexity.ai/chat/completions"
+    
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
+    
     payload = {
-        "model": CONFIG["model_names"]["perplexity"],
-        "messages": [{"role": "user", "content": query}],
-        "return_citations": True
+        "model": model_name,
+        "messages": [{"role": "user", "content": query}]
     }
     
-    resp = requests.post(url, json=payload, headers=headers, timeout=CONFIG["request_timeout"])
+    try:
+        resp = requests.post(
+            url,
+            json=payload,
+            headers=headers,
+            timeout=CONFIG["request_timeout"]
+        )
+        
+        if resp.status_code == 200:
+            d = resp.json()
+            usage = d.get('usage', {})
+            
+            if 'choices' in d and d['choices']:
+                msg = d['choices'][0].get('message', {})
+                txt = msg.get('content', '')
+                cits = msg.get('citations', [])
+                
+                return {
+                    "text": txt,
+                    "citations": cits,
+                    "tokens": (usage.get('prompt_tokens', 0), usage.get('completion_tokens', 0))
+                }
+        elif resp.status_code in [429, 500, 503, 504]:
+            time.sleep(3)
+            return None
+        else:
+            logger.error(f"Perplexity error {resp.status_code}: {resp.text}")
+            return None
     
-    if resp.status_code == 200:
-        d = resp.json()
-        usage = d.get('usage', {})
-        return {
-            "text": d['choices'][0]['message']['content'],
-            "citations": d.get('citations', []),
-            "tokens": (usage.get('prompt_tokens', 0), usage.get('completion_tokens', 0))
-        }
-    elif resp.status_code == 429:
-        time.sleep(5)
+    except requests.exceptions.Timeout:
+        logger.warning("Perplexity timeout")
         return None
-    else:
+    except Exception as e:
+        logger.error(f"Perplexity exception: {e}")
         return None
+
+
+def resolve_redirect(url):
+    """Vyřeší Google grounding redirect"""
+    if 'url?q=' in url:
+        match = re.search(r'[?&]q=([^&]+)', url)
+        if match:
+            from urllib.parse import unquote
+            return unquote(match.group(1))
+    return url
+
 
 def ask_gemini(query, api_key):
     """Zavolej Gemini API"""
     model_name = CONFIG["model_names"]["gemini"]
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [{"parts": [{"text": query}]}],
         "tools": [{"google_search": {}}]
     }
     
-    resp = requests.post(url, json=payload, headers=headers, timeout=CONFIG["request_timeout"])
-    
-    if resp.status_code == 200:
-        d = resp.json()
-        usage = d.get('usageMetadata', {})
+    try:
+        resp = requests.post(url, json=payload, headers=headers, timeout=CONFIG["request_timeout"])
         
-        if 'candidates' in d and d['candidates']:
-            cand = d['candidates'][0]
-            txt = cand.get('content', {}).get('parts', [])[0].get('text', "") if cand.get('content') else ""
-            cits = []
+        if resp.status_code == 200:
+            d = resp.json()
+            usage = d.get('usageMetadata', {})
             
-            if 'groundingMetadata' in cand:
-                for ch in cand.get('groundingMetadata', {}).get('groundingChunks', []):
-                    if 'web' in ch and ch['web'].get('uri'):
-                        cits.append(resolve_redirect(ch['web']['uri']))
-            
-            if not txt:
+            if 'candidates' in d and d['candidates']:
+                cand = d['candidates'][0]
+                txt = cand.get('content', {}).get('parts', [])[0].get('text', "") if cand.get('content') else ""
+                cits = []
+                
+                if 'groundingMetadata' in cand:
+                    for ch in cand.get('groundingMetadata', {}).get('groundingChunks', []):
+                        if 'web' in ch and ch['web'].get('uri'):
+                            cits.append(resolve_redirect(ch['web']['uri']))
+                
+                if not txt:
+                    logger.warning("Gemini returned empty text")
+                    return None
+                
+                return {
+                    "text": txt,
+                    "citations": cits,
+                    "tokens": (usage.get('promptTokenCount', 0), usage.get('candidatesTokenCount', 0))
+                }
+            else:
+                logger.warning(f"Gemini no candidates: {d}")
                 return None
-            
-            return {
-                "text": txt,
-                "citations": cits,
-                "tokens": (usage.get('promptTokenCount', 0), usage.get('candidatesTokenCount', 0))
-            }
-        else:
+        elif resp.status_code in [429, 500, 503, 504]:
+            logger.warning(f"Gemini {resp.status_code}")
+            time.sleep(3)
             return None
-    elif resp.status_code in [429, 500, 503, 504]:
-        time.sleep(3)
+        else:
+            logger.error(f"Gemini error {resp.status_code}: {resp.text}")
+            return None
+    
+    except requests.exceptions.Timeout:
+        logger.warning("Gemini timeout")
         return None
-    else:
+    except Exception as e:
+        logger.error(f"Gemini exception: {e}")
         return None
 
+
 def get_ai_response(provider, query, perplexity_key, gemini_key):
-    """Wrapper s retry logikou"""
-    def api_call():
+    """Získá odpověď od AI providera s retry"""
+    
+    def _call():
         if provider == "Perplexity":
             return ask_perplexity(query, perplexity_key)
         elif provider == "Gemini":
             return ask_gemini(query, gemini_key)
-        return None
+        else:
+            logger.error(f"Unknown provider: {provider}")
+            return None
     
-    return retry_with_backoff(api_call)
+    return retry_with_backoff(_call)
+
 
 def get_advanced_metrics(text, brand_name, gemini_key):
-    """Získej sentiment a recommendation pomocí Gemini"""
-    if not text or not brand_name:
-        return "N/A", "NE"
+    """
+    Sentiment analysis pomocí Gemini
+    Vrací: {'sentiment': 'POSITIVE/NEGATIVE/NEUTRAL', 'recommendation': 'ANO/NE'}
+    """
+    model_name = CONFIG["model_names"]["judge"]
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
     
-    text_snippet = text[:3000]
-    prompt = f"""Analyze regarding "{brand_name}". 1. Sentiment: POSITIVE/NEGATIVE/NEUTRAL. 2. Recommendation: Explicit top choice? (YES/NO). Format: SENTIMENT | RECOMMENDATION"""
+    prompt = f"""Analyzuj následující text z hlediska zmínky o značce "{brand_name}".
+
+Text: {text[:1000]}
+
+Odpověz ve formátu JSON:
+{{
+  "sentiment": "POSITIVE" nebo "NEGATIVE" nebo "NEUTRAL",
+  "recommendation": "ANO" nebo "NE"
+}}
+
+sentiment = celkový tón zmínky (pozitivní/negativní/neutrální)
+recommendation = zda text doporučuje tuto značku (ANO/NE)
+
+Odpověz POUZE validním JSON, nic jiného."""
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{CONFIG['model_names']['judge']}:generateContent?key={gemini_key}"
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}]
+    }
     
     try:
-        resp = requests.post(
-            url,
-            json={"contents": [{"parts": [{"text": prompt}]}]},
-            headers={"Content-Type": "application/json"},
-            timeout=30
-        )
+        resp = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=30)
         
         if resp.status_code == 200:
-            raw = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip().upper()
-            parts = raw.split('|')
-            
-            if len(parts) >= 2:
-                sent = parts[0].strip()
-                if sent not in ["POSITIVE", "NEGATIVE", "NEUTRAL"]:
-                    sent = "NEUTRAL"
-                rec = "ANO" if "YES" in parts[1].strip() else "NE"
-                return sent, rec
-        
-        return "NEUTRAL", "NE"
+            d = resp.json()
+            if 'candidates' in d and d['candidates']:
+                txt = d['candidates'][0].get('content', {}).get('parts', [])[0].get('text', "")
+                
+                # Odstraň markdown backticks
+                txt = txt.replace('```json', '').replace('```', '').strip()
+                
+                # Parse JSON
+                result = json.loads(txt)
+                return {
+                    'sentiment': result.get('sentiment', 'NEUTRAL'),
+                    'recommendation': result.get('recommendation', 'NE')
+                }
     except:
-        return "N/A", "NE"
+        pass
+    
+    return {'sentiment': '', 'recommendation': ''}
 
-# ==========================================
-# ANALYSIS
-# ==========================================
+# ============================================================
+# ANALYSIS FUNCTIONS
+# ============================================================
 
-def analyze_presence_with_position(text, citations, brand_obj):
-    """Analyzuj přítomnost brandu v textu a citacích"""
-    clean_content = clean_text_aggressive(text)
-    found_text = 0
-    first_index = float('inf')
+def clean_text_aggressive(text):
+    """Agresivní normalizace textu pro porovnání"""
+    if not text:
+        return ""
     
-    for kw in brand_obj['keywords']:
-        clean_kw = clean_text_aggressive(kw)
-        idx = clean_content.find(clean_kw)
-        if idx != -1:
-            found_text = 1
-            if idx < first_index:
-                first_index = idx
+    # Unicode normalizace
+    text = unicodedata.normalize('NFKC', text)
     
-    final_position_index = first_index if found_text else -1
+    # Lowercase
+    text = text.lower()
     
-    found_citation = 0
-    for u in brand_obj['urls']:
-        if u and any(u.lower() in cit.lower() for cit in citations):
-            found_citation = 1
-            break
+    # Odstraň diakritiku
+    text = ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
     
-    return found_text, found_citation, final_position_index
+    # Odstraň speciální znaky
+    text = re.sub(r'[^\w\s]', ' ', text)
+    
+    # Odstraň extra mezery
+    text = ' '.join(text.split())
+    
+    return text
 
-def identify_url_owner(url, all_brands):
-    """Identifikuj vlastníka URL"""
+
+def analyze_presence_with_position(text, keywords, citations):
+    """
+    Analyzuje přítomnost brand keywords v textu a citacích
+    Vrací pozici první zmínky
+    """
+    text_clean = clean_text_aggressive(text)
+    citations_clean = [clean_text_aggressive(c) for c in citations]
+    
+    found_text = False
+    found_citation = False
+    position_index = None
+    
+    # Hledej v textu
+    for keyword in keywords:
+        keyword_clean = clean_text_aggressive(keyword)
+        
+        if keyword_clean in text_clean:
+            found_text = True
+            
+            # Najdi pozici (jednoduché - první výskyt)
+            if position_index is None:
+                # Spočítej "pořadí" v textu (kolikátý brand je zmíněn)
+                pos = text_clean.find(keyword_clean)
+                # Aproximace ranku - každých 100 znaků = +1 rank
+                position_index = (pos // 100) + 1
+    
+    # Hledej v citacích
+    for citation_clean in citations_clean:
+        for keyword in keywords:
+            keyword_clean = clean_text_aggressive(keyword)
+            if keyword_clean in citation_clean:
+                found_citation = True
+                break
+    
+    return {
+        'found_text': found_text,
+        'found_citation': found_citation,
+        'position_index': position_index
+    }
+
+
+def identify_url_owner(url, brands):
+    """
+    Identifikuje vlastníka URL podle brand URLs
+    """
+    if not url:
+        return None
+    
     url_lower = url.lower()
-    for brand in all_brands:
-        for b_url in brand['urls']:
-            if b_url.lower() in url_lower:
-                return brand['name'], brand['type']
-    return "Ostatní / Média", "Other"
+    
+    # Zkontroluj každý brand
+    for brand in brands:
+        # Zkontroluj jestli URL obsahuje nějaké keywords z brand name
+        for keyword in brand['keywords']:
+            if keyword.lower() in url_lower:
+                return brand['name']
+    
+    return None
 
-# ==========================================
-# QUERY PROCESSING
-# ==========================================
+# ============================================================
+# PROCESSING
+# ============================================================
 
 def process_single_query(item, providers, all_brands, timestamp, date_only, perplexity_key, gemini_key):
-    """Zpracuj jeden dotaz"""
-    dotaz = item['query']
-    q_cat = item['category']
-    q_type = item['type']
-    q_persona = item['persona']
-    q_product = item['product']
+    """Zpracuje jeden dotaz napříč všemi providery"""
+    
+    query_text = item['query']
+    query_id = item.get('query_id', '')
+    category = item.get('category', '')
+    product = item.get('product', '')
+    top_product = item.get('top_product', '')
+    sub_product = item.get('sub_product', '')
+    type_person = item.get('type_person', '')
+    
+    logger.info(f"Processing: {query_text[:50]}...")
     
     results = {
         'log': [],
@@ -443,73 +551,121 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
     }
     
     for provider in providers:
-        result = get_ai_response(provider, dotaz, perplexity_key, gemini_key)
-        
-        if result:
-            content = result['text']
-            citations = result['citations']
-            tokens = result.get('tokens', (0, 0))
-            found_count = 0
+        try:
+            # Získej AI odpověď
+            response = get_ai_response(provider, query_text, perplexity_key, gemini_key)
             
-            temp_res = []
+            if not response:
+                # Selhání - ulož do failed
+                results['failed'].append({
+                    'query': item,
+                    'provider': provider,
+                    'error': 'API timeout/error',
+                    'timestamp': datetime.now().isoformat(),
+                    'retry_count': 1
+                })
+                continue
+            
+            # Log záznam
+            log_entry = {
+                'Date': date_only,
+                'Timestamp': timestamp,
+                'Query_ID': query_id,
+                'Query': query_text,
+                'Query_Category': category,
+                'Query_Product': product,
+                'Query_Top_Product': top_product,
+                'Query_Sub_Product': sub_product,
+                'Query_TypePerson': type_person,
+                'Provider': provider,
+                'Response': response['text'][:5000] if response['text'] else '',
+                'Input_Tokens': response['tokens'][0],
+                'Output_Tokens': response['tokens'][1]
+            }
+            results['log'].append(log_entry)
+            
+            # Analýza brandů
             for brand in all_brands:
-                in_txt, in_cit, pos_index = analyze_presence_with_position(content, citations, brand)
-                temp_res.append({"brand": brand, "in_txt": in_txt, "in_cit": in_cit, "pos_index": pos_index})
-            
-            brands_in_text = [b for b in temp_res if b['pos_index'] != -1]
-            brands_in_text.sort(key=lambda x: x['pos_index'])
-            rank_map = {b_obj['brand']['name']: rank for rank, b_obj in enumerate(brands_in_text, 1)}
-            
-            for res in temp_res:
-                b_name = res['brand']['name']
-                final_rank = rank_map.get(b_name, "")
-                sentiment, recommended = "N/A", "NE"
+                presence = analyze_presence_with_position(
+                    response['text'],
+                    brand['keywords'],
+                    response['citations']
+                )
                 
-                if res['in_txt'] or res['in_cit']:
-                    found_count += 1
-                    sentiment, recommended = get_advanced_metrics(content, b_name, gemini_key)
+                # Sentiment analysis
+                sentiment_data = get_advanced_metrics(
+                    response['text'],
+                    brand['name'],
+                    gemini_key
+                )
                 
-                results['data'].append([
-                    timestamp, date_only, q_cat, q_type, q_product, q_persona,
-                    dotaz, provider, b_name, res['brand']['type'],
-                    res['in_txt'], res['in_cit'], sentiment, recommended, final_rank
-                ])
+                data_entry = {
+                    'Date': date_only,
+                    'Timestamp': timestamp,
+                    'Query_ID': query_id,
+                    'Query': query_text,
+                    'Query_Category': category,
+                    'Query_Product': product,
+                    'Query_Top_Product': top_product,
+                    'Query_Sub_Product': sub_product,
+                    'Query_TypePerson': type_person,
+                    'Provider': provider,
+                    'Term_Version': brand['version'],
+                    'Term_Name': brand['name'],
+                    'Term_Category': brand['category'],
+                    'Text_Presence': 1 if presence['found_text'] else 0,
+                    'Citation_Presence': 1 if presence['found_citation'] else 0,
+                    'Rank': presence['position_index'] if presence['position_index'] else '',
+                    'Sentiment': sentiment_data.get('sentiment', ''),
+                    'Recommendation': sentiment_data.get('recommendation', '')
+                }
+                results['data'].append(data_entry)
             
-            for cit_url in citations:
-                o_name, o_type = identify_url_owner(cit_url, all_brands)
-                results['url'].append([
-                    timestamp, date_only, q_cat, q_type, q_product, q_persona,
-                    dotaz, provider, cit_url, o_name, o_type
-                ])
-            
-            results['log'].append([
-                timestamp, date_only, q_cat, q_type, q_product, q_persona,
-                dotaz, provider, found_count, tokens[0], tokens[1], content
-            ])
-        else:
-            # Selhalo
+            # URL analýza
+            for citation in response['citations']:
+                owner = identify_url_owner(citation, all_brands)
+                
+                url_entry = {
+                    'Date': date_only,
+                    'Timestamp': timestamp,
+                    'Query_ID': query_id,
+                    'Query': query_text,
+                    'Query_Category': category,
+                    'Query_Product': product,
+                    'Query_Top_Product': top_product,
+                    'Query_Sub_Product': sub_product,
+                    'Query_TypePerson': type_person,
+                    'Provider': provider,
+                    'URL': citation,
+                    'URL_Name': owner if owner else '',
+                    'URL_Category': ''
+                }
+                results['url'].append(url_entry)
+        
+        except Exception as e:
+            logger.error(f"Error processing {provider}: {e}")
             results['failed'].append({
-                "query": item,
-                "provider": provider,
-                "error": "API timeout/error",
-                "timestamp": datetime.now().isoformat(),
-                "retry_count": 1
+                'query': item,
+                'provider': provider,
+                'error': str(e),
+                'timestamp': datetime.now().isoformat(),
+                'retry_count': 1
             })
-            
-            results['log'].append([
-                timestamp, date_only, q_cat, q_type, q_product, q_persona,
-                dotaz, provider, 0, 0, 0, "ERROR / TIMEOUT"
-            ])
     
     return results
 
-def process_queries_parallel(queries, brands, providers, max_workers, perplexity_key, gemini_key, is_retry=False):
-    """Zpracuj dotazy paralelně"""
+
+def process_queries_parallel(queries, brands, providers, max_workers, perplexity_key, gemini_key):
+    """Zpracuje dotazy paralelně"""
+    
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     date_only = datetime.now().strftime("%Y-%m-%d")
     
-    all_log, all_data, all_url, all_failed = [], [], [], []
-    completed = 0
+    all_log = []
+    all_data = []
+    all_url = []
+    all_failed = []
+    successful = 0
     
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
@@ -522,144 +678,76 @@ def process_queries_parallel(queries, brands, providers, max_workers, perplexity
                 date_only,
                 perplexity_key,
                 gemini_key
-            ): item
-            for item in queries
+            ): item for item in queries
         }
         
         for future in as_completed(futures):
-            completed += 1
-            item = futures[future]
-            
             try:
-                results = future.result(timeout=180)
+                result = future.result()
                 
-                all_log.extend(results['log'])
-                all_data.extend(results['data'])
-                all_url.extend(results['url'])
-                all_failed.extend(results['failed'])
+                all_log.extend(result['log'])
+                all_data.extend(result['data'])
+                all_url.extend(result['url'])
+                all_failed.extend(result['failed'])
                 
-                # Průběžný zápis
+                if not result['failed']:
+                    successful += 1
+                
+                # Batch save
                 if len(all_log) >= CONFIG["batch_size"]:
-                    save_results_to_sheets_internal(all_log, all_data, all_url)
+                    with sheets_lock:
+                        save_results_to_sheets_internal(all_log, all_data, all_url)
                     all_log, all_data, all_url = [], [], []
-                
+            
             except Exception as e:
-                logger.error(f"Query failed: {item['query'][:50]} - {e}")
-                all_failed.append({
-                    "query": item,
-                    "provider": "ALL",
-                    "error": str(e),
-                    "timestamp": datetime.now().isoformat(),
-                    "retry_count": 1
-                })
+                logger.error(f"Future error: {e}")
     
-    # Finální zápis
+    # Final save
     if all_log or all_data or all_url:
-        save_results_to_sheets_internal(all_log, all_data, all_url)
+        with sheets_lock:
+            save_results_to_sheets_internal(all_log, all_data, all_url)
     
     return {
-        'successful': len(queries) * len(providers) - len(all_failed),
-        'failed_count': len(all_failed),
-        'failed': all_failed
+        'successful': successful,
+        'failed': all_failed,
+        'failed_count': len(all_failed)
     }
 
-# ==========================================
-# SHEETS WRITING
-# ==========================================
+# ============================================================
+# FAILED QUERIES MANAGEMENT
+# ============================================================
 
-def append_to_sheet_safe(wb, sheet_name, data_rows, header):
-    """Thread-safe zápis do Sheets"""
-    if not data_rows:
-        return
+def save_failed_queries(new_failed, filepath):
+    """Uloží selhané dotazy - MERGE s existujícími"""
     
-    with sheets_lock:
-        try:
-            try:
-                ws = wb.worksheet(sheet_name)
-                if len(ws.get_all_values()) == 0:
-                    ws.append_row(header)
-                    ws.format('1:1', {'textFormat': {'bold': True}})
-            except gspread.WorksheetNotFound:
-                ws = wb.add_worksheet(title=sheet_name, rows=1000, cols=20)
-                ws.append_row(header)
-                ws.format('1:1', {'textFormat': {'bold': True}})
-            
-            ws.append_rows(data_rows)
-            logger.info(f"✅ Saved {len(data_rows)} rows to {sheet_name}")
-            
-        except Exception as e:
-            logger.error(f"Failed to write to {sheet_name}: {e}")
-            time.sleep(2)
-            try:
-                ws = wb.worksheet(sheet_name)
-                ws.append_rows(data_rows)
-            except:
-                pass
-
-# Global workbook reference
-_wb = None
-
-def save_results_to_sheets_internal(log_batch, data_batch, url_batch):
-    """Internal helper pro zápis - používá globální workbook"""
-    global _wb
-    if _wb is None:
-        _wb = init_google_sheets()
-    
-    if log_batch:
-        append_to_sheet_safe(
-            _wb,
-            CONFIG["sheets"]["log_output"],
-            log_batch,
-            ["Timestamp", "Date", "Query Category", "Query type", "Query Product", "Persona", "Query", "AI Tool", "Found Count", "Input Tokens", "Output Tokens", "Response"]
-        )
-    
-    if data_batch:
-        append_to_sheet_safe(
-            _wb,
-            CONFIG["sheets"]["data_output"],
-            data_batch,
-            ["Timestamp", "Date", "Query Category", "Query type", "Query Product", "Persona", "Query", "AI Tool", "Brand", "Brand Type", "Text Presence", "Citation Presence", "Sentiment", "Recommendation", "Rank"]
-        )
-    
-    if url_batch:
-        append_to_sheet_safe(
-            _wb,
-            CONFIG["sheets"]["url_output"],
-            url_batch,
-            ["Timestamp", "Date", "Query Category", "Query type", "Query Product", "Persona", "Query", "AI Tool", "URL", "Owner", "Owner Type"]
-        )
-
-# ==========================================
-# FAILED QUERIES
-# ==========================================
-
-def save_failed_queries(failed_list, filepath):
-    """Ulož selhané dotazy do JSON"""
     # Načti existující
-    existing = []
     if filepath.exists():
-        try:
-            with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            try:
                 existing = json.load(f)
-        except:
-            existing = []
+            except:
+                existing = []
+    else:
+        existing = []
     
-    # Merge s novými
-    unique_failed = {}
+    # Merge
+    all_failed = existing + new_failed
     
-    # Nejdřív existující
-    for item in existing:
-        key = f"{item['query']['query']}_{item['provider']}"
-        unique_failed[key] = item
+    # Deduplikace podle query + provider
+    seen = set()
+    unique_failed = []
     
-    # Pak nové (přepíše staré pokud mají vyšší retry_count)
-    for item in failed_list:
-        key = f"{item['query']['query']}_{item['provider']}"
-        if key not in unique_failed or item.get('retry_count', 0) > unique_failed[key].get('retry_count', 0):
-            unique_failed[key] = item
+    for item in all_failed:
+        key = (item['query']['query'], item['provider'])
+        if key not in seen:
+            seen.add(key)
+            unique_failed.append(item)
     
-    # Ulož
+    # Uložení
     with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(list(unique_failed.values()), f, indent=2, ensure_ascii=False)
+        json.dump(unique_failed, f, indent=2, ensure_ascii=False)
     
-    logger.info(f"💾 Saved {len(unique_failed)} failed queries to {filepath}")
+    if unique_failed:
+        logger.info(f"💾 Saved {len(unique_failed)} failed queries to {filepath}")
+    else:
+        logger.info(f"💾 No failed queries")

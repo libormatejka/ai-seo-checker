@@ -5,7 +5,6 @@ Hlavní denní run - stahuje všechny dotazy z Google Sheets
 
 import os
 import sys
-import json
 from datetime import datetime
 from pathlib import Path
 
@@ -100,8 +99,6 @@ def main():
             logger.warning(f"⚠️  Low success rate: {success_rate:.1f}%")
     
     logger.info("=" * 60)
-    
-    # NEUKONČUJ s exit code 1 - nech GitHub Actions commitnout failed_queries.json
 
 if __name__ == "__main__":
     main()
