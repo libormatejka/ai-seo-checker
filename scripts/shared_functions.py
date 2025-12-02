@@ -503,6 +503,19 @@ def analyze_presence_with_position(text, keywords, citations):
     """
     Analyzuje přítomnost brand keywords v textu a citacích
     OPRAVA: Používá word boundaries pro přesnější matching
+    
+    Args:
+        text: Text odpovědi
+        keywords: List všech variant názvu brandu
+        citations: List citovaných URLs
+    
+    Returns:
+        {
+            'found_text': bool,
+            'found_citation': bool, 
+            'position_index': int nebo None,
+            'matched_keywords': list nalezených keywords
+        }
     """
     text_clean = clean_text_aggressive(text)
     citations_clean = [clean_text_aggressive(c) for c in citations]
@@ -511,6 +524,7 @@ def analyze_presence_with_position(text, keywords, citations):
     found_citation = False
     position_index = None
     first_match_pos = None
+    matched_keywords = []
     
     # Hledej v textu - JAKÝKOLIV keyword stačí
     for keyword in keywords:
@@ -531,12 +545,13 @@ def analyze_presence_with_position(text, keywords, citations):
         
         if match:
             found_text = True
+            matched_keywords.append(keyword)  # Zapamatuj si který keyword byl nalezen
             
             # Zapamatuj si první výskyt (nejnižší pozice)
             if first_match_pos is None or match.start() < first_match_pos:
                 first_match_pos = match.start()
     
-    # Vypočítej rank z první pozice
+    # Vypočítaj rank z první pozice
     if first_match_pos is not None:
         position_index = (first_match_pos // 100) + 1
     
@@ -553,7 +568,8 @@ def analyze_presence_with_position(text, keywords, citations):
     return {
         'found_text': found_text,
         'found_citation': found_citation,
-        'position_index': position_index
+        'position_index': position_index,
+        'matched_keywords': matched_keywords
     }
 
 
@@ -635,20 +651,26 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
             
             # Analýza brandů
             for brand in all_brands:
+                # Analyzuj přítomnost všech variant brandu
                 presence = analyze_presence_with_position(
                     response['text'],
-                    brand['keywords'],  # Všechny varianty (George, ČS, Spořka...)
+                    brand['keywords'],
                     response['citations']
                 )
                 
-                # Sentiment analysis
+                # Sentiment analysis - použij hlavní název brandu
                 sentiment_data = get_advanced_metrics(
                     response['text'],
-                    brand['name'],  # Hlavní název pro sentiment
+                    brand['name'],
                     gemini_key
                 )
                 
-                # JEDEN řádek per TERM_NAME (brand)
+                # Vytvoř Term_Version ze seznamu nalezených keywords
+                if presence.get('matched_keywords'):
+                    term_version = ', '.join(presence['matched_keywords'])
+                else:
+                    term_version = ''
+                
                 data_entry = {
                     'Date': date_only,
                     'Timestamp': timestamp,
@@ -660,8 +682,8 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     'Query_Sub_Product': sub_product,
                     'Query_TypePerson': type_person,
                     'Provider': provider,
-                    'Term_Version': ', '.join(brand['keywords'][:3]),  # První 3 varianty jako ukázka
-                    'Term_Name': brand['name'],  # HLAVNÍ NÁZEV
+                    'Term_Version': term_version,  # Které konkrétní varianty byly nalezeny
+                    'Term_Name': brand['name'],  # Hlavní název brandu
                     'Term_Category': brand['category'],
                     'Text_Presence': 1 if presence['found_text'] else 0,
                     'Citation_Presence': 1 if presence['found_citation'] else 0,
@@ -703,7 +725,6 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
             })
     
     return results
-
 
 def process_queries_parallel(queries, brands, providers, max_workers, perplexity_key, gemini_key):
     """Zpracuje dotazy paralelně"""
