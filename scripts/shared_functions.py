@@ -103,14 +103,33 @@ def init_google_sheets():
 
 
 def load_queries(wb):
-    """Načte dotazy z Google Sheets - nová struktura"""
+    """Načte dotazy z Google Sheets - nová struktura s ACTIVE filtrem"""
     ws = wb.worksheet("Queries")
     data = ws.get_all_records()
     
     queries = []
+    skipped = 0
+    
     for row in data:
         # Přeskakuj prázdné řádky
         if not row.get('QUERY') or not str(row.get('QUERY')).strip():
+            continue
+        
+        # NOVÉ: Filtruj podle ACTIVE sloupce
+        active = row.get('ACTIVE')
+        
+        # Kontrola různých formátů TRUE/FALSE
+        is_active = False
+        if isinstance(active, bool):
+            is_active = active
+        elif isinstance(active, str):
+            is_active = active.upper() in ['TRUE', 'YES', '1', 'ANO']
+        elif isinstance(active, int):
+            is_active = active == 1
+        
+        # Přeskoč neaktivní dotazy
+        if not is_active:
+            skipped += 1
             continue
         
         queries.append({
@@ -120,8 +139,12 @@ def load_queries(wb):
             'product': str(row.get('QUERY_PRODUCT', '')),
             'top_product': str(row.get('QUERY_TOP_PRODUCT', '')),
             'sub_product': str(row.get('QUERY_SUB_PRODUCT', '')),
-            'type_person': str(row.get('QUERY_TYPEPERSON', ''))
+            'type_person': str(row.get('QUERY_TYPEPERSON', '')),
+            'active': True  # Uložíme pro jistotu
         })
+    
+    if skipped > 0:
+        logger.info(f"⏭️  Skipped {skipped} inactive queries")
     
     return queries
 
