@@ -107,10 +107,6 @@ def load_queries(wb):
     ws = wb.worksheet("Queries")
     data = ws.get_all_records()
     
-    # DEBUG: Vypiš názvy sloupců
-    if data:
-        logger.info(f"📋 Columns in Queries sheet: {list(data[0].keys())}")
-    
     queries = []
     skipped = 0
     
@@ -119,10 +115,8 @@ def load_queries(wb):
         if not row.get('QUERY') or not str(row.get('QUERY')).strip():
             continue
         
-        # NOVÉ: Filtruj podle ACTIVE sloupce
+        # Filtruj podle ACTIVE sloupce
         active = row.get('ACTIVE')
-        
-        # Kontrola různých formátů TRUE/FALSE
         is_active = False
         if isinstance(active, bool):
             is_active = active
@@ -131,33 +125,19 @@ def load_queries(wb):
         elif isinstance(active, int):
             is_active = active == 1
         
-        # Přeskoč neaktivní dotazy
         if not is_active:
             skipped += 1
             continue
         
-        # DEBUG: Vypiš první řádek
-        if len(queries) == 0:
-            logger.info(f"📋 First row data: {row}")
-            logger.info(f"📋 QUERY_TYPEPERSON value: '{row.get('QUERY_TYPEPERSON')}'")
-        
-        # Zkus různé varianty názvu sloupce
-        type_person = (
-            str(row.get('QUERY_TYPEPERSON', '')) or
-            str(row.get('Query_TypePerson', '')) or
-            str(row.get('QUERY_TYPE_PERSON', '')) or
-            str(row.get('Query TypePerson', '')) or
-            ''
-        )
-        
         queries.append({
-            'query_id': str(row.get('QUERY_ID', '')),
-            'query': str(row.get('QUERY', '')),
-            'category': str(row.get('QUERY_CATEGORY', '')),
-            'product': str(row.get('QUERY_PRODUCT', '')),
-            'top_product': str(row.get('QUERY_TOP_PRODUCT', '')),
-            'sub_product': str(row.get('QUERY_SUB_PRODUCT', '')),
-            'type_person': type_person.strip(),
+            'query_id': str(row.get('QUERY_ID', '') or ''),
+            'query': str(row.get('QUERY', '') or ''),
+            'category': str(row.get('QUERY_CATEGORY', '') or ''),
+            'product': str(row.get('QUERY_PRODUCT', '') or ''),
+            'top_product': str(row.get('QUERY_TOP_PRODUCT', '') or ''),
+            'sub_product': str(row.get('QUERY_SUB_PRODUCT', '') or ''),
+            'query_type': str(row.get('QUERY_TYPE', '') or ''),  # ← NOVÝ
+            'person': str(row.get('PERSON', '') or ''),  # ← OPRAVENO
             'active': True
         })
     
@@ -234,7 +214,7 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
         log_headers = [
             'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
-            'Query_TypePerson', 'Provider', 'Response',
+            'Query_Type', 'Person', 'Provider', 'Response',  # ← OPRAVENO
             'Input_Tokens', 'Output_Tokens'
         ]
         
@@ -254,7 +234,7 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
         data_headers = [
             'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
-            'Query_TypePerson', 'Provider', 'Term_Version', 'Term_Name',
+            'Query_Type', 'Person', 'Provider', 'Term_Version', 'Term_Name',  # ← OPRAVENO
             'Term_Category', 'Text_Presence', 'Citation_Presence',
             'Rank', 'Sentiment', 'Recommendation'
         ]
@@ -274,7 +254,7 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
         url_headers = [
             'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
-            'Query_TypePerson', 'Provider', 'URL', 'URL_Name', 'URL_Category'
+            'Query_Type', 'Person', 'Provider', 'URL', 'URL_Name', 'URL_Category'  # ← OPRAVENO
         ]
         
         try:
@@ -622,7 +602,8 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
     product = item.get('product', '')
     top_product = item.get('top_product', '')
     sub_product = item.get('sub_product', '')
-    type_person = item.get('type_person', '')
+    query_type = item.get('query_type', '')  # ← NOVÝ
+    person = item.get('person', '')  # ← OPRAVENO
     
     logger.info(f"Processing: {query_text[:50]}...")
     
@@ -659,7 +640,8 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                 'Query_Product': product,
                 'Query_Top_Product': top_product,
                 'Query_Sub_Product': sub_product,
-                'Query_TypePerson': type_person,
+                'Query_Type': query_type,  # ← NOVÝ
+                'Person': person,  # ← OPRAVENO
                 'Provider': provider,
                 'Response': response['text'][:5000] if response['text'] else '',
                 'Input_Tokens': response['tokens'][0],
@@ -698,10 +680,11 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     'Query_Product': product,
                     'Query_Top_Product': top_product,
                     'Query_Sub_Product': sub_product,
-                    'Query_TypePerson': type_person,
+                    'Query_Type': query_type,  # ← NOVÝ
+                    'Person': person,  # ← OPRAVENO
                     'Provider': provider,
-                    'Term_Version': term_version,  # Které konkrétní varianty byly nalezeny
-                    'Term_Name': brand['name'],  # Hlavní název brandu
+                    'Term_Version': term_version,
+                    'Term_Name': brand['name'],
                     'Term_Category': brand['category'],
                     'Text_Presence': 1 if presence['found_text'] else 0,
                     'Citation_Presence': 1 if presence['found_citation'] else 0,
@@ -724,7 +707,8 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     'Query_Product': product,
                     'Query_Top_Product': top_product,
                     'Query_Sub_Product': sub_product,
-                    'Query_TypePerson': type_person,
+                    'Query_Type': query_type,  # ← NOVÝ
+                    'Person': person,  # ← OPRAVENO
                     'Provider': provider,
                     'URL': citation,
                     'URL_Name': owner if owner else '',
