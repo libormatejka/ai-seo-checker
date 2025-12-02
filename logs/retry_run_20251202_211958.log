@@ -1,0 +1,12 @@
+2025-12-02 21:19:58,402 - retry_run - INFO - 🔄 RETRY RUN STARTED
+2025-12-02 21:19:58,402 - retry_run - INFO - 📋 Found 1 failed query attempts
+2025-12-02 21:19:58,402 - retry_run - INFO - 🎯 Unique query+provider combinations to retry: 1
+2025-12-02 21:20:00,000 - retry_run - INFO - ⚙️  Retrying: Jaké jsou nejlepší banky v ČR?... with Gemini
+2025-12-02 21:20:18,189 - retry_run - INFO - 💾 Cleared failed_queries.json - all recovered!
+2025-12-02 21:20:18,189 - retry_run - INFO - ============================================================
+2025-12-02 21:20:18,189 - retry_run - INFO - ✅ RETRY RUN COMPLETED
+2025-12-02 21:20:18,189 - retry_run - INFO - 📊 Attempted: 1
+2025-12-02 21:20:18,189 - retry_run - INFO - ✅ Recovered: 1
+2025-12-02 21:20:18,189 - retry_run - INFO - ❌ Still failing: 0
+2025-12-02 21:20:18,189 - retry_run - INFO - 🎉 All queries recovered!
+2025-12-02 21:20:18,189 - retry_run - INFO - ============================================================
