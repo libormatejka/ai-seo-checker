@@ -107,6 +107,10 @@ def load_queries(wb):
     ws = wb.worksheet("Queries")
     data = ws.get_all_records()
     
+    # DEBUG: Vypiš názvy sloupců
+    if data:
+        logger.info(f"📋 Columns in Queries sheet: {list(data[0].keys())}")
+    
     queries = []
     skipped = 0
     
@@ -132,6 +136,20 @@ def load_queries(wb):
             skipped += 1
             continue
         
+        # DEBUG: Vypiš první řádek
+        if len(queries) == 0:
+            logger.info(f"📋 First row data: {row}")
+            logger.info(f"📋 QUERY_TYPEPERSON value: '{row.get('QUERY_TYPEPERSON')}'")
+        
+        # Zkus různé varianty názvu sloupce
+        type_person = (
+            str(row.get('QUERY_TYPEPERSON', '')) or
+            str(row.get('Query_TypePerson', '')) or
+            str(row.get('QUERY_TYPE_PERSON', '')) or
+            str(row.get('Query TypePerson', '')) or
+            ''
+        )
+        
         queries.append({
             'query_id': str(row.get('QUERY_ID', '')),
             'query': str(row.get('QUERY', '')),
@@ -139,8 +157,8 @@ def load_queries(wb):
             'product': str(row.get('QUERY_PRODUCT', '')),
             'top_product': str(row.get('QUERY_TOP_PRODUCT', '')),
             'sub_product': str(row.get('QUERY_SUB_PRODUCT', '')),
-            'type_person': str(row.get('QUERY_TYPEPERSON', '')),
-            'active': True  # Uložíme pro jistotu
+            'type_person': type_person.strip(),
+            'active': True
         })
     
     if skipped > 0:
