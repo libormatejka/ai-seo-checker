@@ -150,26 +150,35 @@ def load_queries(wb):
 
 
 def load_brands(wb):
-    """Načte brandy (terms) z Google Sheets - nová struktura"""
+    """Načte brandy (terms) z Google Sheets - seskupí podle TERM_NAME"""
     ws = wb.worksheet("Terms")
     data = ws.get_all_records()
     
-    brands = []
+    # Seskup podle TERM_NAME (hlavní název brandu)
+    brands_dict = {}
+    
     for row in data:
         # Přeskakuj prázdné řádky
-        if not row.get('TERM_NAME') or not str(row.get('TERM_NAME')).strip():
+        term_version = str(row.get('TERM_VERSION', '')).strip()
+        if not term_version:
             continue
         
-        # Načti brand keywords ze sloupce TERM_NAME
-        term_name = str(row.get('TERM_NAME', ''))
-        keywords = [k.strip() for k in term_name.split(',') if k.strip()]
+        term_name = str(row.get('TERM_NAME', '')).strip()
+        category = str(row.get('TERM_CATEGORY', '')).strip()
         
-        brands.append({
-            'version': str(row.get('TERM_VERSION', '')),
-            'name': term_name,
-            'category': str(row.get('TERM_CATEGORY', '')),
-            'keywords': keywords
-        })
+        # Inicializuj brand pokud neexistuje
+        if term_name not in brands_dict:
+            brands_dict[term_name] = {
+                'name': term_name,  # Hlavní název (Česká spořitelna)
+                'category': category,
+                'keywords': []  # Seznam všech variant
+            }
+        
+        # Přidej keyword (variantu)
+        brands_dict[term_name]['keywords'].append(term_version)
+    
+    # Převeď na list
+    brands = list(brands_dict.values())
     
     return brands
 
@@ -493,7 +502,7 @@ def clean_text_aggressive(text):
 def analyze_presence_with_position(text, keywords, citations):
     """
     Analyzuje přítomnost brand keywords v textu a citacích
-    Vrací pozici první zmínky
+    OPRAVA: Používá word boundaries pro přesnější matching
     """
     text_clean = clean_text_aggressive(text)
     citations_clean = [clean_text_aggressive(c) for c in citations]
@@ -501,28 +510,45 @@ def analyze_presence_with_position(text, keywords, citations):
     found_text = False
     found_citation = False
     position_index = None
+    first_match_pos = None
     
-    # Hledej v textu
+    # Hledej v textu - JAKÝKOLIV keyword stačí
     for keyword in keywords:
         keyword_clean = clean_text_aggressive(keyword)
         
-        if keyword_clean in text_clean:
+        # Pro krátké keywords (2 znaky nebo méně) používej word boundary
+        # Pro URL nebo delší použij substring
+        if len(keyword_clean) <= 2:
+            # Word boundary pro krátké (ČS, KB, atd.)
+            pattern = r'\b' + re.escape(keyword_clean) + r'\b'
+            match = re.search(pattern, text_clean)
+        else:
+            # Substring pro delší nebo URL
+            if keyword_clean in text_clean:
+                match = re.search(re.escape(keyword_clean), text_clean)
+            else:
+                match = None
+        
+        if match:
             found_text = True
             
-            # Najdi pozici (jednoduché - první výskyt)
-            if position_index is None:
-                # Spočítej "pořadí" v textu (kolikátý brand je zmíněn)
-                pos = text_clean.find(keyword_clean)
-                # Aproximace ranku - každých 100 znaků = +1 rank
-                position_index = (pos // 100) + 1
+            # Zapamatuj si první výskyt (nejnižší pozice)
+            if first_match_pos is None or match.start() < first_match_pos:
+                first_match_pos = match.start()
     
-    # Hledej v citacích
+    # Vypočítej rank z první pozice
+    if first_match_pos is not None:
+        position_index = (first_match_pos // 100) + 1
+    
+    # Hledej v citacích (substring je OK pro URLs)
     for citation_clean in citations_clean:
         for keyword in keywords:
             keyword_clean = clean_text_aggressive(keyword)
             if keyword_clean in citation_clean:
                 found_citation = True
                 break
+        if found_citation:
+            break
     
     return {
         'found_text': found_text,
@@ -611,17 +637,18 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
             for brand in all_brands:
                 presence = analyze_presence_with_position(
                     response['text'],
-                    brand['keywords'],
+                    brand['keywords'],  # Všechny varianty (George, ČS, Spořka...)
                     response['citations']
                 )
                 
                 # Sentiment analysis
                 sentiment_data = get_advanced_metrics(
                     response['text'],
-                    brand['name'],
+                    brand['name'],  # Hlavní název pro sentiment
                     gemini_key
                 )
                 
+                # JEDEN řádek per TERM_NAME (brand)
                 data_entry = {
                     'Date': date_only,
                     'Timestamp': timestamp,
@@ -633,8 +660,8 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     'Query_Sub_Product': sub_product,
                     'Query_TypePerson': type_person,
                     'Provider': provider,
-                    'Term_Version': brand['version'],
-                    'Term_Name': brand['name'],
+                    'Term_Version': ', '.join(brand['keywords'][:3]),  # První 3 varianty jako ukázka
+                    'Term_Name': brand['name'],  # HLAVNÍ NÁZEV
                     'Term_Category': brand['category'],
                     'Text_Presence': 1 if presence['found_text'] else 0,
                     'Citation_Presence': 1 if presence['found_citation'] else 0,
