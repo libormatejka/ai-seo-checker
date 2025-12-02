@@ -234,9 +234,9 @@ def save_results_to_sheets_internal(log_rows, data_rows, url_rows):
         data_headers = [
             'Date', 'Timestamp', 'Query_ID', 'Query', 'Query_Category',
             'Query_Product', 'Query_Top_Product', 'Query_Sub_Product',
-            'Query_Type', 'Person', 'Provider', 'Term_Version', 'Term_Name',  # ← OPRAVENO
+            'Query_Type', 'Person', 'Provider', 'Term_Version', 'Term_Name',
             'Term_Category', 'Text_Presence', 'Citation_Presence',
-            'Rank', 'Sentiment', 'Recommendation'
+            'Rank', 'Mention_Count', 'Sentiment', 'Recommendation'  # ← NOVÉ
         ]
         
         try:
@@ -505,7 +505,8 @@ def find_all_brand_mentions(text, all_brands):
             'brand_name': {
                 'rank': int,
                 'position': int,
-                'matched_keywords': [list]
+                'matched_keywords': [list],
+                'mention_count': int  ← NOVÉ
             }
         }
     """
@@ -518,9 +519,10 @@ def find_all_brand_mentions(text, all_brands):
         brand_name = brand['name']
         keywords = brand['keywords']
         
-        # Najdi první výskyt tohoto brandu
+        # Najdi VŠECHNY výskyty tohoto brandu
         first_pos = None
         matched_kws = []
+        total_mentions = 0  # ← NOVÉ: celkový počet výskytů
         
         for keyword in keywords:
             keyword_clean = clean_text_aggressive(keyword)
@@ -528,24 +530,27 @@ def find_all_brand_mentions(text, all_brands):
             # Pro krátké keywords používej word boundary
             if len(keyword_clean) <= 2:
                 pattern = r'\b' + re.escape(keyword_clean) + r'\b'
-                match = re.search(pattern, text_clean)
+                matches = list(re.finditer(pattern, text_clean))
             else:
-                if keyword_clean in text_clean:
-                    match = re.search(re.escape(keyword_clean), text_clean)
-                else:
-                    match = None
+                # Najdi všechny výskyty
+                matches = list(re.finditer(re.escape(keyword_clean), text_clean))
             
-            if match:
+            if matches:
                 matched_kws.append(keyword)
-                if first_pos is None or match.start() < first_pos:
-                    first_pos = match.start()
+                total_mentions += len(matches)  # ← NOVÉ: počítáme všechny výskyty
+                
+                # Zapamatuj první pozici
+                for match in matches:
+                    if first_pos is None or match.start() < first_pos:
+                        first_pos = match.start()
         
         # Pokud byl brand nalezen, přidej do seznamu
         if first_pos is not None:
             all_mentions.append({
                 'brand_name': brand_name,
                 'position': first_pos,
-                'matched_keywords': matched_kws
+                'matched_keywords': matched_kws,
+                'mention_count': total_mentions  # ← NOVÉ
             })
     
     # Seřaď podle pozice (nejdřív = rank 1)
@@ -557,7 +562,8 @@ def find_all_brand_mentions(text, all_brands):
         brand_rankings[mention['brand_name']] = {
             'rank': rank,
             'position': mention['position'],
-            'matched_keywords': mention['matched_keywords']
+            'matched_keywords': mention['matched_keywords'],
+            'mention_count': mention['mention_count']  # ← NOVÉ
         }
     
     return brand_rankings
@@ -577,7 +583,8 @@ def analyze_presence_with_position(brand_name, brand_rankings, citations, brand_
             'found_text': bool,
             'found_citation': bool,
             'position_index': int nebo None (rank),
-            'matched_keywords': list
+            'matched_keywords': list,
+            'mention_count': int  ← NOVÉ
         }
     """
     # Text presence a rank z pre-computed rankings
@@ -587,10 +594,12 @@ def analyze_presence_with_position(brand_name, brand_rankings, citations, brand_
         found_text = True
         position_index = brand_info['rank']
         matched_keywords = brand_info['matched_keywords']
+        mention_count = brand_info['mention_count']  # ← NOVÉ
     else:
         found_text = False
         position_index = None
         matched_keywords = []
+        mention_count = 0  # ← NOVÉ
     
     # Hledej v citacích
     found_citation = False
@@ -609,7 +618,8 @@ def analyze_presence_with_position(brand_name, brand_rankings, citations, brand_
         'found_text': found_text,
         'found_citation': found_citation,
         'position_index': position_index,
-        'matched_keywords': matched_keywords
+        'matched_keywords': matched_keywords,
+        'mention_count': mention_count  # ← NOVÉ
     }
 
 
@@ -735,6 +745,7 @@ def process_single_query(item, providers, all_brands, timestamp, date_only, perp
                     'Text_Presence': 1 if presence['found_text'] else 0,
                     'Citation_Presence': 1 if presence['found_citation'] else 0,
                     'Rank': presence['position_index'] if presence['position_index'] else '',
+                    'Mention_Count': presence.get('mention_count', 0),  # ← NOVÉ
                     'Sentiment': sentiment_data.get('sentiment', ''),
                     'Recommendation': sentiment_data.get('recommendation', '')
                 }
