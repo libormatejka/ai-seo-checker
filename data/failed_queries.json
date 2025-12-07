@@ -1,1 +1,53 @@
-[]
+[
+  {
+    "query": {
+      "query_id": "3",
+      "query": "Která banka nabízí přefinancování půjčky?",
+      "category": "Informační",
+      "product": "Product",
+      "top_product": "Půjčky",
+      "sub_product": "Konsolidace",
+      "query_type": "Question",
+      "person": "1",
+      "active": true
+    },
+    "provider": "Gemini",
+    "error": "API timeout/error",
+    "timestamp": "2025-12-07T07:07:17.058722",
+    "retry_count": 1
+  },
+  {
+    "query": {
+      "query_id": "1",
+      "query": "Jaké jsou nejlepší banky v ČR?",
+      "category": "Srovnávací",
+      "product": "Brand",
+      "top_product": "Brand",
+      "sub_product": "Brand",
+      "query_type": "Question",
+      "person": "1",
+      "active": true
+    },
+    "provider": "Gemini",
+    "error": "API timeout/error",
+    "timestamp": "2025-12-07T07:07:19.501934",
+    "retry_count": 1
+  },
+  {
+    "query": {
+      "query_id": "2",
+      "query": "Která banka nabízí půjčky?",
+      "category": "Informační",
+      "product": "Product",
+      "top_product": "Půjčky",
+      "sub_product": "Půjčka",
+      "query_type": "Question",
+      "person": "1",
+      "active": true
+    },
+    "provider": "Gemini",
+    "error": "API timeout/error",
+    "timestamp": "2025-12-07T07:07:21.840752",
+    "retry_count": 1
+  }
+]
