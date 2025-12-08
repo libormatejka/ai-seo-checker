@@ -1,0 +1,21 @@
+2025-12-08 07:10:04,154 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2025-12-08 07:10:04,155 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2025-12-08 07:10:04,157 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2025-12-08 07:10:12,522 - shared - WARNING - ⚠️ Rate limit for batch sentiment
+2025-12-08 07:10:13,722 - shared - WARNING - ⚠️ Rate limit for batch sentiment
+2025-12-08 07:10:14,645 - shared - WARNING - Gemini 429
+2025-12-08 07:10:15,772 - shared - WARNING - ⚠️ Rate limit for batch sentiment
+2025-12-08 07:10:15,845 - shared - WARNING - Gemini 429
+2025-12-08 07:10:17,885 - shared - WARNING - Gemini 429
+2025-12-08 07:10:18,762 - shared - WARNING - Gemini 429
+2025-12-08 07:10:19,960 - shared - WARNING - Gemini 429
+2025-12-08 07:10:21,995 - shared - WARNING - Gemini 429
+2025-12-08 07:10:23,879 - shared - WARNING - Gemini 429
+2025-12-08 07:10:25,072 - shared - WARNING - Gemini 429
+2025-12-08 07:10:27,119 - shared - WARNING - Gemini 429
+2025-12-08 07:10:30,995 - shared - WARNING - Gemini 429
+2025-12-08 07:10:32,180 - shared - WARNING - Gemini 429
+2025-12-08 07:10:34,240 - shared - WARNING - Gemini 429
+2025-12-08 07:10:37,813 - shared - INFO - ✅ Saved 3 rows to log_answers
+2025-12-08 07:10:38,793 - shared - INFO - ✅ Saved 54 rows to data_analysis
+2025-12-08 07:10:38,796 - shared - INFO - 💾 Saved 3 failed queries to data/failed_queries.json
