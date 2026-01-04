@@ -1,0 +1,21 @@
+2026-01-04 07:08:31,270 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-01-04 07:08:31,271 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-01-04 07:08:31,273 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-01-04 07:08:36,143 - shared - WARNING - ⚠️ Rate limit for batch sentiment
+2026-01-04 07:08:37,205 - shared - WARNING - ⚠️ Rate limit for batch sentiment
+2026-01-04 07:08:38,243 - shared - WARNING - Gemini 429
+2026-01-04 07:08:38,987 - shared - WARNING - ⚠️ Rate limit for batch sentiment
+2026-01-04 07:08:39,301 - shared - WARNING - Gemini 429
+2026-01-04 07:08:41,093 - shared - WARNING - Gemini 429
+2026-01-04 07:08:42,345 - shared - WARNING - Gemini 429
+2026-01-04 07:08:43,393 - shared - WARNING - Gemini 429
+2026-01-04 07:08:45,187 - shared - WARNING - Gemini 429
+2026-01-04 07:08:47,440 - shared - WARNING - Gemini 429
+2026-01-04 07:08:48,490 - shared - WARNING - Gemini 429
+2026-01-04 07:08:50,273 - shared - WARNING - Gemini 429
+2026-01-04 07:08:54,528 - shared - WARNING - Gemini 429
+2026-01-04 07:08:55,587 - shared - WARNING - Gemini 429
+2026-01-04 07:08:57,349 - shared - WARNING - Gemini 429
+2026-01-04 07:09:01,082 - shared - INFO - ✅ Saved 3 rows to log_answers
+2026-01-04 07:09:02,547 - shared - INFO - ✅ Saved 54 rows to data_analysis
+2026-01-04 07:09:02,550 - shared - INFO - 💾 Saved 3 failed queries to data/failed_queries.json
