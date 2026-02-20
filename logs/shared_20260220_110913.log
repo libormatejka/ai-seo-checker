@@ -1,0 +1,114 @@
+2026-02-20 11:09:14,806 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-02-20 11:09:14,950 - shared - WARNING - Gemini 429
+2026-02-20 11:09:19,061 - shared - WARNING - Gemini 429
+2026-02-20 11:09:24,180 - shared - WARNING - Gemini 429
+2026-02-20 11:09:31,299 - shared - WARNING - Gemini 429
+2026-02-20 11:09:34,300 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-02-20 11:09:34,409 - shared - WARNING - Gemini 429
+2026-02-20 11:09:38,531 - shared - WARNING - Gemini 429
+2026-02-20 11:09:43,647 - shared - WARNING - Gemini 429
+2026-02-20 11:09:50,770 - shared - WARNING - Gemini 429
+2026-02-20 11:09:53,771 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-02-20 11:09:53,887 - shared - WARNING - Gemini 429
+2026-02-20 11:09:58,002 - shared - WARNING - Gemini 429
+2026-02-20 11:10:03,126 - shared - WARNING - Gemini 429
+2026-02-20 11:10:10,245 - shared - WARNING - Gemini 429
+2026-02-20 11:10:13,247 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-02-20 11:10:13,366 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8e650cb5e7eb',t:'MTc3MTU4NTgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:14,491 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8e6bf85734a1',t:'MTc3MTU4NTgxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:16,609 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8e794fa05fe3',t:'MTc3MTU4NTgxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:20,720 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8e93089234a1',t:'MTc3MTU4NTgyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:20,721 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-02-20 11:10:20,822 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8e93a93ce7eb',t:'MTc3MTU4NTgyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:21,946 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8e9a9f147b83',t:'MTc3MTU4NTgyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:24,069 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8ea7ddef5fe3',t:'MTc3MTU4NTgyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:28,175 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8ec1aa30e7eb',t:'MTc3MTU4NTgyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:28,177 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-02-20 11:10:28,297 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8ec248cb7b83',t:'MTc3MTU4NTgyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:29,408 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8ec94aa31f2f',t:'MTc3MTU4NTgyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:31,522 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8ed67f5234a1',t:'MTc3MTU4NTgzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+2026-02-20 11:10:35,628 - shared - ERROR - Perplexity error 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d8ef03e74e7eb',t:'MTc3MTU4NTgzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
