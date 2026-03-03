@@ -1,0 +1,42 @@
+2026-03-03 13:23:02,694 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-03-03 13:23:02,977 - shared - WARNING - Gemini 429
+2026-03-03 13:23:07,215 - shared - WARNING - Gemini 429
+2026-03-03 13:23:12,348 - shared - WARNING - Gemini 429
+2026-03-03 13:23:19,579 - shared - WARNING - Gemini 429
+2026-03-03 13:23:22,581 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-03-03 13:23:22,727 - shared - WARNING - Gemini 429
+2026-03-03 13:23:26,966 - shared - WARNING - Gemini 429
+2026-03-03 13:23:32,098 - shared - WARNING - Gemini 429
+2026-03-03 13:23:39,225 - shared - WARNING - Gemini 429
+2026-03-03 13:23:42,226 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-03-03 13:23:42,367 - shared - WARNING - Gemini 429
+2026-03-03 13:23:46,590 - shared - WARNING - Gemini 429
+2026-03-03 13:23:51,732 - shared - WARNING - Gemini 429
+2026-03-03 13:23:58,870 - shared - WARNING - Gemini 429
+2026-03-03 13:24:01,872 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-03-03 13:24:02,064 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:03,192 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:05,329 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:09,462 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:09,464 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-03-03 13:24:09,593 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:10,741 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:12,874 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:17,003 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:17,005 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-03-03 13:24:17,128 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:18,258 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:20,396 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 13:24:24,531 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
