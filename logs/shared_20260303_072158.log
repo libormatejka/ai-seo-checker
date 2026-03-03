@@ -1,0 +1,40 @@
+2026-03-03 07:22:01,004 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-03-03 07:22:01,006 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-03-03 07:22:01,007 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-03-03 07:22:01,169 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:01,185 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:01,202 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:02,325 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:02,382 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:02,384 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:04,439 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:04,502 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:04,549 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:08,584 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:08,627 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:08,682 - shared - ERROR - Perplexity error 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+2026-03-03 07:22:08,776 - shared - WARNING - Gemini 429
+2026-03-03 07:22:08,776 - shared - WARNING - Gemini 429
+2026-03-03 07:22:08,820 - shared - WARNING - Gemini 429
+2026-03-03 07:22:12,911 - shared - WARNING - Gemini 429
+2026-03-03 07:22:12,927 - shared - WARNING - Gemini 429
+2026-03-03 07:22:12,944 - shared - WARNING - Gemini 429
+2026-03-03 07:22:18,047 - shared - WARNING - Gemini 429
+2026-03-03 07:22:18,058 - shared - WARNING - Gemini 429
+2026-03-03 07:22:18,075 - shared - WARNING - Gemini 429
+2026-03-03 07:22:25,177 - shared - WARNING - Gemini 429
+2026-03-03 07:22:25,192 - shared - WARNING - Gemini 429
+2026-03-03 07:22:25,199 - shared - WARNING - Gemini 429
+2026-03-03 07:22:28,201 - shared - INFO - 💾 Saved 6 failed queries to data/failed_queries.json
