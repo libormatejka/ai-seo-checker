@@ -1,0 +1,17 @@
+2026-03-25 09:14:58,555 - retry_run - INFO - 🔄 RETRY RUN STARTED
+2026-03-25 09:14:58,555 - retry_run - INFO - 📋 Found 6 failed query attempts
+2026-03-25 09:14:58,555 - retry_run - INFO - 🎯 Unique query+provider combinations to retry: 6
+2026-03-25 09:15:01,093 - retry_run - INFO - ⚙️  Retrying: Která banka nabízí přefinancování půjčky?... with Gemini
+2026-03-25 09:15:20,722 - retry_run - INFO - ⚙️  Retrying: Jaké jsou nejlepší banky v ČR?... with Gemini
+2026-03-25 09:15:40,287 - retry_run - INFO - ⚙️  Retrying: Která banka nabízí půjčky?... with Gemini
+2026-03-25 09:15:59,845 - retry_run - INFO - ⚙️  Retrying: Která banka nabízí přefinancování půjčky?... with Perplexity
+2026-03-25 09:16:07,307 - retry_run - INFO - ⚙️  Retrying: Jaké jsou nejlepší banky v ČR?... with Perplexity
+2026-03-25 09:16:14,796 - retry_run - INFO - ⚙️  Retrying: Která banka nabízí půjčky?... with Perplexity
+2026-03-25 09:16:22,253 - retry_run - INFO - 💾 Saved 6 still-failing queries
+2026-03-25 09:16:22,253 - retry_run - INFO - ============================================================
+2026-03-25 09:16:22,253 - retry_run - INFO - ✅ RETRY RUN COMPLETED
+2026-03-25 09:16:22,254 - retry_run - INFO - 📊 Attempted: 6
+2026-03-25 09:16:22,254 - retry_run - INFO - ✅ Recovered: 0
+2026-03-25 09:16:22,254 - retry_run - INFO - ❌ Still failing: 6
+2026-03-25 09:16:22,254 - retry_run - WARNING - ⚠️  6 queries still failing
+2026-03-25 09:16:22,254 - retry_run - INFO - ============================================================
