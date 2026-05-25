@@ -1,0 +1,42 @@
+2026-05-25 10:27:52,924 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-05-25 10:27:53,093 - shared - WARNING - Gemini 429
+2026-05-25 10:27:57,227 - shared - WARNING - Gemini 429
+2026-05-25 10:28:02,377 - shared - WARNING - Gemini 429
+2026-05-25 10:28:09,512 - shared - WARNING - Gemini 429
+2026-05-25 10:28:12,514 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-05-25 10:28:12,647 - shared - WARNING - Gemini 429
+2026-05-25 10:28:16,780 - shared - WARNING - Gemini 429
+2026-05-25 10:28:21,916 - shared - WARNING - Gemini 429
+2026-05-25 10:28:29,054 - shared - WARNING - Gemini 429
+2026-05-25 10:28:32,056 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-05-25 10:28:32,193 - shared - WARNING - Gemini 429
+2026-05-25 10:28:36,328 - shared - WARNING - Gemini 429
+2026-05-25 10:28:41,466 - shared - WARNING - Gemini 429
+2026-05-25 10:28:48,615 - shared - WARNING - Gemini 429
+2026-05-25 10:28:51,617 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-05-25 10:28:51,726 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:28:52,830 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:28:54,935 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:28:59,048 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:28:59,049 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-05-25 10:28:59,156 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:00,277 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:02,421 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:06,526 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:06,527 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-05-25 10:29:06,628 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:07,729 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:09,841 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-05-25 10:29:13,945 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
