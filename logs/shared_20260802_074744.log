@@ -1,0 +1,40 @@
+2026-08-02 07:47:46,580 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-08-02 07:47:46,581 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-08-02 07:47:46,583 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-08-02 07:47:46,667 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:46,669 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:46,673 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:47,722 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:47,733 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:47,756 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:49,771 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:49,784 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:49,801 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:53,817 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:53,835 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:53,854 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, please check your plan and billing details. For more information, visit https://www.perplexity.ai/settings/api.","type":"insufficient_quota","code":401}}
+
+2026-08-02 07:47:53,958 - shared - WARNING - Gemini 429
+2026-08-02 07:47:53,993 - shared - WARNING - Gemini 429
+2026-08-02 07:47:53,995 - shared - WARNING - Gemini 429
+2026-08-02 07:47:58,058 - shared - WARNING - Gemini 429
+2026-08-02 07:47:58,117 - shared - WARNING - Gemini 429
+2026-08-02 07:47:58,122 - shared - WARNING - Gemini 429
+2026-08-02 07:48:03,199 - shared - WARNING - Gemini 429
+2026-08-02 07:48:03,260 - shared - WARNING - Gemini 429
+2026-08-02 07:48:03,263 - shared - WARNING - Gemini 429
+2026-08-02 07:48:10,324 - shared - WARNING - Gemini 429
+2026-08-02 07:48:10,395 - shared - WARNING - Gemini 429
+2026-08-02 07:48:10,401 - shared - WARNING - Gemini 429
+2026-08-02 07:48:13,403 - shared - INFO - 💾 Saved 6 failed queries to data/failed_queries.json
