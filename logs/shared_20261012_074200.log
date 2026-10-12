@@ -1,0 +1,304 @@
+2026-10-12 07:42:02,295 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-10-12 07:42:02,295 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-10-12 07:42:02,298 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-10-12 07:42:02,443 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:02,445 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:02,452 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:03,565 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:03,573 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:03,580 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:05,690 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:05,691 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:05,696 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:09,809 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:09,815 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:09,824 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-10-12 07:42:09,975 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:09,976 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:09,979 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:11,094 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:11,101 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:11,113 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:13,207 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:13,220 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:13,230 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:17,336 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:17,354 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:17,359 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-10-12 07:42:17,360 - shared - INFO - 💾 Saved 6 failed queries to data/failed_queries.json
