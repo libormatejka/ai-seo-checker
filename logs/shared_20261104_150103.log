@@ -1,0 +1,306 @@
+2026-11-04 15:01:05,833 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-11-04 15:01:05,881 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:06,929 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:08,981 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:13,033 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:13,034 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-11-04 15:01:13,072 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:14,118 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:16,158 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:20,194 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:20,195 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-11-04 15:01:20,238 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:21,282 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:23,333 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:27,375 - shared - ERROR - Gemini error 400: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "API_KEY_INVALID",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.googleapis.com"
+        }
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+        "locale": "en-US",
+        "message": "API key not valid. Please pass a valid API key."
+      }
+    ]
+  }
+}
+
+2026-11-04 15:01:27,376 - shared - INFO - Processing: Která banka nabízí přefinancování půjčky?...
+2026-11-04 15:01:27,440 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:28,500 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:30,547 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:34,588 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:34,589 - shared - INFO - Processing: Jaké jsou nejlepší banky v ČR?...
+2026-11-04 15:01:34,640 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:35,703 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:37,747 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:41,779 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:41,780 - shared - INFO - Processing: Která banka nabízí půjčky?...
+2026-11-04 15:01:41,822 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:42,856 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:44,891 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
+2026-11-04 15:01:48,940 - shared - ERROR - Perplexity error 401: {"error":{"message":"You exceeded your current quota, add credits at https://console.perplexity.ai/project/billing.","type":"insufficient_quota","code":401}}
+
